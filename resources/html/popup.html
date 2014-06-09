@@ -6,14 +6,16 @@
 <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
 
 <script type="text/javascript">
-	appAPI.resources.addInlineJS('js/hello.min.js');
-	appAPI.resources.addInlineJS('js/login.js');
+	
     function crossriderMain($){
+    	//appAPI.resources.includeJS('js/hello.min.js');
+	//appAPI.resources.includeJS('js/login.js');
         // Note: don't forget to add the files to the extension's resources
         // Load resource CSS
         //appAPI.resources.includeCSS('style.css');
         // Load resource JS
-        //eval(appAPI.resources.get('js/oauth.min.js'));
+        eval(appAPI.resources.get('js/hello.min.js'));
+        eval(appAPI.resources.get('js/login.js'));
        	
         // Load resource image
 //        $('img#login').attr('src', appAPI.resources.get('images/sign-in-with-twitter-gray.png'));
