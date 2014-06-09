@@ -9,7 +9,7 @@ appAPI.ready(function() {
     // See the note following this code.
     appAPI.browserAction.setResourceIcon('icons/wp-icon.png');
     
-    appAPI.browserAction.setPopup({resourcePath:'html/popup.html',height:'300px',width:'300px'});
+    appAPI.browserAction.setPopup({resourcePath:'html/popup.html',height:'500px',width:'500px'});
     // Add a semi-transparent badge
     //
     // NOTE: Call the setBadgeUpdate method again to update the badge

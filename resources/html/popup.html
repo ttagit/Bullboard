@@ -6,8 +6,8 @@
 <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
 
 <script type="text/javascript">
-	appAPI.resources.addInlineJS('js/oauth.min.js');
-	appAPI.resources.addInlineJS('js/twitter.js');
+	appAPI.resources.addInlineJS('js/hello.min.js');
+	appAPI.resources.addInlineJS('js/login.js');
     function crossriderMain($){
         // Note: don't forget to add the files to the extension's resources
         // Load resource CSS
@@ -16,15 +16,15 @@
         //eval(appAPI.resources.get('js/oauth.min.js'));
        	
         // Load resource image
-        $('img#login').attr('src', appAPI.resources.get('images/sign-in-with-twitter-gray.png'));
-        $('img#login').click(function() {
-        	twitterLogin();
-        });
+//        $('img#login').attr('src', appAPI.resources.get('images/sign-in-with-twitter-gray.png'));
+//        $('img#login').click(function() {
+//        	twitterLogin();
+//        });
     }
 </script>
 </head>
 <body>
 <img id="login" src="">
-
+<button id='login' onclick="hello.login('twitter');">Twitter</button>
 </body>
 </html>
