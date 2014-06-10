@@ -4,10 +4,19 @@
 *************************************************************************************/
 
 appAPI.ready(function($) {
-
-    // Place your code here (you can also define new functions above this scope)
-    // The $ object is the extension's jQuery object
-	
-  //  alert("My new Crossrider extension works! The current page is: " + document.location.href);
-
+//    eval(appAPI.resources.get('js/hello.min.js'));
+//    
+//    hello.init({ 
+//          twitter : '5Xq8DNluLF0rZ4zXaTkBgaMG1'
+//        },{redirect_uri:'redirect.html',oauth_proxy : 'http://labs.stirringminds.com:8888/oauthproxy'});
+//        
+//        
+//        hello.on('auth.login', function(r){
+//          hello.api(r.network+':/me', function(p){
+//            //alert(JSON.stringify(p));
+//            document.getElementById('login').innerHTML = "<img src='"+ p.thumbnail + "' width=24/>Connected to "+ r.network+" as " + p.name;
+//          });
+//        
+//            });
+    
 });

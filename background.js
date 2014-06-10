@@ -17,5 +17,11 @@ appAPI.ready(function() {
     
     // Add a tooltip
     appAPI.browserAction.setTitle('Open mySite in a new tab');
+   //appAPI.db.async.set('style-css', appAPI.resources.get('style.css'));
+  appAPI.db.async.set('hello', appAPI.resources.get('js/hello.min.js'));
+  appAPI.db.async.set('login', appAPI.resources.get('js/login.js'));
+  //appAPI.db.async.set('twitter', appAPI.resources.get('js/twitter.js'));
+  appAPI.db.async.set('style-css', appAPI.resources.get('css/style.css'));
+  
     
 });

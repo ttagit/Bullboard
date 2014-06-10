@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- This meta tag is relevant only for IE -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<script type="text/javascript">
+function crossriderMain($) {
+    $('img#login').attr('src', appAPI.resources.get('images/sign-in-with-twitter-gray.png'));
+    
+  appAPI.db.async.get('style-css', function(rules) {
+    $('<style type="text/css">').text(rules).appendTo('head');
+  });
+  
+  var session = null;
+  appAPI.db.async.get("user-session",function(data){
+    
+    session = data;
+    console.log(data);
+    
+    
+    if(!data){        
+        $('div#noSession').addClass('shown').removeClass('hidden');
+        $('button#logout').addClass('hidden').removeClass('shown');
+    }
+    else{
+        $('button#logout').addClass('shown').removeClass('hidden');
+        $('div#noSession').addClass('hidden').removeClass('shown');
+    }
+    
+  });
+
+  appAPI.db.async.get('hello', function(code) {
+      //console.log(code);
+    // runs in the context of the extension
+    $.globalEval(code.replace('CONTEXT','EXTN'));
+
+    // Alternatively, run in context of page DOM
+    $('<script type="text/javascript">')
+      .html(code.replace('CONTEXT','PAGE DOM')).appendTo('head');
+      
+      hello.init({ 
+          twitter : '5Xq8DNluLF0rZ4zXaTkBgaMG1'
+        },{redirect_uri:'redirect.html',oauth_proxy : 'http://labs.stirringminds.com:8888/oauthproxy'});
+        
+        
+        hello.on('auth.login', function(r){
+          hello.api(r.network+':/me', function(p){
+            alert(JSON.stringify(p));
+            //document.getElementById('login').innerHTML = "<img src='"+ p.thumbnail + "' width=24/>Connected to "+ r.network+" as " + p.name;
+          });
+        
+            });
+    });
+  
+//  appAPI.db.async.get('login', function(code) {
+//    // runs in the context of the extension
+//    $.globalEval(code.replace('CONTEXT','EXTN'));
+//
+//    // Alternatively, run in context of page DOM
+//    $('<script type="text/javascript">')
+//      .html(code.replace('CONTEXT','PAGE DOM')).appendTo('head');
+//  });
+
+//    appAPI.ready(function($) {
+//        // gets the value saved in the specified key
+//        var value = appAPI.db.async.get("url");
+//        console.log(value);
+//    });
+    
+    //$("#info").html(appAPI.db.get('url'));
+    $('img#login').click(function() {
+    	hello.login('twitter');
+    });
+    console.log(!session,session); 
+}
+</script>
+</head>
+<body>
+<div id="noSession" class="shown">
+    <h1>Please login with twitter to proceed!</h1>
+    <img id="login" src="" />
+    <p id="info"> </p>
+</div>
+
+<button id="logout" class="hidden;">Logout</button>
+</body>
+</html>
