@@ -10,10 +10,13 @@
   if (twitter.isAuthenticated()) {
     var root = document.querySelector("#content");
     
+    var input = document.querySelector("#input");
+    
+    
 
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 
-      twitter.fetchTimelines(root,tabs[0].url);
+      twitter.fetchTimelines(root,input,tabs[0].url);
 
     });
     
