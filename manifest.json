@@ -1,0 +1,30 @@
+{
+  "name": "TTAGIT",
+  "description": "peer2peer twitter commenting",
+  "version": "0.1",
+  "manifest_version": 2,
+  "content_scripts": [
+    {
+      "matches": ["https://api.twitter.com/oauth/authorize"],
+      "js": ["const.js", "content_script.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "browser_action": {
+    "default_title": "peer2peer twitter commenting",
+    "default_icon": "apple-touch-icon.png",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "scripts":  [
+      "library/jquery.min.js",
+      "library/underscore.min.js",
+      "library/sha1.js",
+      "library/oauth.js",
+      "const.js",
+      "twitter.js",
+      "background.js"
+    ]
+  },
+  "permissions": ["http://*/*", "https://*/*", "tabs", "cookies", "notifications", "contextMenus", "webNavigation", "webRequest", "webRequestBlocking", "unlimitedStorage", "storage" ]
+}
