@@ -20,13 +20,13 @@ if (pinElement !== null && document.referrer.match(/oauth_consumer_key=([^&]+)/)
     chrome.extension.sendRequest({ "verifier": pin }, function(isSuccess) {
       if (isSuccess === true) {
         alert("Authorized, woot!");
-
-
-    chrome.extension.sendRequest({"newTab":true},function(isSuccess){
-    	if(isSuccess === true){
-    		
-    	}
-    })
+    	chrome.extension.sendRequest({"newTab":true},function(isSuccess){
+	    	if(isSuccess === true){
+	    		
+	    	}
+	    });
+    
+    
       }
       else{
       	pin = prompt("Enter the PIN displayed by Twitter");
