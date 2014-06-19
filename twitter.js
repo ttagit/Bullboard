@@ -260,7 +260,7 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
             source = $("<a>").attr("href", "javascript:void(0)").text(tweet.source);
           }
 
-          var replyBack = $("<a>").attr({"href":"javascript:void(0)","id":"reply"+tweet.id_str}).text("Reply");
+          var replyBack = $("<a>").attr({"href":"javascript:void(0)","id":"reply"+tweet.id_str}).text("Reply back");
 
           $(replyBack).click(function(){
             in_reply_to_status_id = tweet.id_str;
@@ -281,7 +281,7 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
             $("<div>").attr("class", "tweet-info").append(
               $("<ul>").append(
                 $("<li>").append(replyBack),
-                $("<li>").append(source),
+                //$("<li>").append(source),
                 $("<li>").append(
                   $("<a>").attr(
                     "href",

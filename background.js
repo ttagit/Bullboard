@@ -9,5 +9,12 @@ function getTwitterAPI() {
 }
 
 chrome.extension.onRequest.addListener(function(req, sender, res) {
-  getTwitterAPI().sign(req.verifier, res);
+	if(req.newTab){
+		chrome.tabs.create({'url': chrome.extension.getURL('welcome.html')}, function(tab) {
+		    
+		});
+  	}
+  	else
+  		getTwitterAPI().sign(req.verifier, res);
+
 });

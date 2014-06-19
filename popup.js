@@ -4,6 +4,8 @@
 
   var loginFormElement = document.querySelector("#twitter-login");
   loginFormElement.addEventListener("click", function() {
+    $("#loading").addClass('show').removeClass('hide');
+    $("#loading > #loadingInformation").html("Redirecting you to twitter autentication");
     twitter.login();
   });
 
@@ -35,6 +37,7 @@
     });
 
   } else {
+    $("#loading").addClass('hide').removeClass('show');
     loginFormElement.style.display = "block";
   }
 })();
