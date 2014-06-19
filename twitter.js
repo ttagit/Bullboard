@@ -131,7 +131,7 @@ Twitter.prototype.isAuthenticated = function() {
   return !_.isNull(this.getAccessToken()) && !_.isNull(this.getAccessTokenSecret()) && _.isNumber(this.getUserID()) ? true : false;
 };
 
-Twitter.prototype.fetchTimelines = function(elm,inputButton,url) {
+Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
   var accessToken = this.getAccessToken();
   var accessTokenSecret = this.getAccessTokenSecret();
 
@@ -147,7 +147,6 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,url) {
       "count": 100
     }
   };
-
 
   var accessor = {
     "consumerSecret": CONSUMER_SECRET,
@@ -167,12 +166,23 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,url) {
   //var debug = $("<div>").attr("id", "debug");
   //debug.html(JSON.stringify(OAuth.addToURL(message.action, message.parameters)));
   
+  var renderTweets = null;
+  var tweets = null;
+  var in_reply_to_status_id = null;
+
+
+  
+
+
   var sendTweet = function(){
+    $(loading).addClass('show').removeClass('hide');
+    delete message['count'];
     message.method = "POST";
     message.action = "https://api.twitter.com/1.1/statuses/update.json";
     message.oauth_token = accessToken
-    //message.parameters['status'] = encodeURIComponent($(tweetInput).find("textarea").val() +" " +url).replace(/'/g,"%27").replace(/"/g,"%22")
-    delete message['count'];
+    message.parameters['status'] = ($(tweetInput).find("textarea").val() +" " +url)
+    if(in_reply_to_status_id)
+      message.parameters['in_reply_to_status_id'] = in_reply_to_status_id;
     OAuth.setTimestampAndNonce(message);
     OAuth.SignatureMethod.sign(message, {
       "consumerSecret": CONSUMER_SECRET,
@@ -182,17 +192,20 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,url) {
     $.ajax({
       type: "POST",
       url: OAuth.addToURL(message.action, message.parameters),
-      data: {status : encodeURIComponent($(tweetInput).find("textarea").val() +" " +url).replace(/'/g,"%27").replace(/"/g,"%22") },
+      //data: {status : encodeURIComponent($(tweetInput).find("textarea").val() +" " +url).replace(/'/g,"%27").replace(/"/g,"%22") },
       success: function(data){
-
+        //alert(JSON.stringify(data));
+        tweets.unshift(data);
+        renderTweets();
+        $(tweetInput).find("textarea").val("");
+        $(loading).addClass('hide').removeClass('show');
       },
       error: function(xhr, status, error) {
-        alert(JSON.stringify(xhr));
-        alert(JSON.stringify(message));
-        alert(JSON.stringify(error));
-
-        alert(OAuth.addToURL(message.action, message.parameters));
-        alert(encodeURIComponent($(tweetInput).find("textarea").val() +" " + url).replace(/'/g,"%27").replace(/"/g,"%22"));
+        //alert(JSON.stringify(xhr));
+        //alert(JSON.stringify(message));
+        //alert(JSON.stringify(error));
+        //alert(OAuth.addToURL(message.action, message.parameters));
+        //alert(encodeURIComponent($(tweetInput).find("textarea").val() +" " + url).replace(/'/g,"%27").replace(/"/g,"%22"));
 
         if (xhr.status === 401) {
           //localStorage.removeItem("access_token");
@@ -216,85 +229,96 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,url) {
     "url": OAuth.addToURL(message.action, message.parameters),
     "dataType": "json",
     "success": function(data) {
-      var tweets = data.statuses;
+      $(loading).addClass('hide');
+      tweets = data.statuses;
       var root = $("<div>").attr("id", "tweets");
-
-      
-
-      
 
       //$("#sendTweet");
 
 
+      renderTweets = function(){
+        tweets.forEach(function(tweet) {
+          var retweeted = false;
 
-      tweets.forEach(function(tweet) {
-        var retweeted = false;
+          if (_.has(tweet, "retweeted_status")) {
+            var entities = tweet.entities;
+            var retweetUser = tweet.user;
 
-        if (_.has(tweet, "retweeted_status")) {
-          var entities = tweet.entities;
-          var retweetUser = tweet.user;
+            tweet = tweet.retweeted_status;
+            tweet.entities = entities;
+            tweet.retweet_user = retweetUser;
 
-          tweet = tweet.retweeted_status;
-          tweet.entities = entities;
-          tweet.retweet_user = retweetUser;
+            retweeted = true;
+          }
 
-          retweeted = true;
-        }
+          var user = tweet.user;
+          var source = $(tweet.source);
+          
+          if (_.isObject(source) && _.isElement(source[0])) {
+            source.attr("target", "_blank");
+          } else {
+            source = $("<a>").attr("href", "javascript:void(0)").text(tweet.source);
+          }
 
-        var user = tweet.user;
-        var source = $(tweet.source);
+          var replyBack = $("<a>").attr({"href":"javascript:void(0)","id":"reply"+tweet.id_str}).text("Reply");
 
-        if (_.isObject(source) && _.isElement(source[0])) {
-          source.attr("target", "_blank");
-        } else {
-          source = $("<a>").attr("href", "javascript:void(0)").text(tweet.source);
-        }
+          $(replyBack).click(function(){
+            in_reply_to_status_id = tweet.id_str;
+            $(tweetInput).find("textarea").val("@"+user.screen_name);
+          });
 
-        var tweetView = $("<div>").attr("class", "tweet").append(
-          $("<div>").attr("class", "tweet-icon").append(
-            $("<img>").attr("src", user.profile_image_url_https)
-          ),
-          $("<div>").attr("class", "tweet-detail").append(
-            $("<a>").attr(
-              "href",
-              "http://twitter.com/" + user.screen_name
-            ).attr("target", "_blank").text(user.name),
-            $("<pre>").html(normalizeTweetText(tweet))
-          ),
-          $("<div>").attr("class", "tweet-info").append(
-            $("<ul>").append(
-              $("<li>").append(source),
-              $("<li>").append(
-                $("<a>").attr(
-                  "href",
-                  "https://twitter.com/" + user.screen_name + "/status/" + tweet.id_str
-                ).attr(
-                  "target",
-                  "_blank"
-                ).text(normalizeDateTime(new Date(tweet.created_at)))
+          var tweetView = $("<div>").attr("class", "tweet").append(
+            $("<div>").attr("class", "tweet-icon").append(
+              $("<img>").attr("src", user.profile_image_url_https)
+            ),
+            $("<div>").attr("class", "tweet-detail").append(
+              $("<a>").attr(
+                "href",
+                "http://twitter.com/" + user.screen_name
+              ).attr("target", "_blank").text(user.name),
+              $("<pre>").html(normalizeTweetText(tweet))
+            ),
+            $("<div>").attr("class", "tweet-info").append(
+              $("<ul>").append(
+                $("<li>").append(replyBack),
+                $("<li>").append(source),
+                $("<li>").append(
+                  $("<a>").attr(
+                    "href",
+                    "https://twitter.com/" + user.screen_name + "/status/" + tweet.id_str
+                  ).attr(
+                    "target",
+                    "_blank"
+                  ).text(normalizeDateTime(new Date(tweet.created_at)))
+                )
               )
             )
-          )
-        );
-
-        if (retweeted) {
-          tweetView.append(
-            $("<div>").attr("class", "retweet-info").append(
-              $("<span>").append(
-                $("<i>").attr("class", "retweet-icon")
-              ),
-              $("<span>").css("color", "#336699").text("Retweeted by " + tweet.retweet_user.name)
-            )
           );
-        }
 
-        tweetView.append($("<div>").attr("class", "clearfix"));
 
+          if (retweeted) {
+            tweetView.append(
+              $("<div>").attr("class", "retweet-info").append(
+                $("<span>").append(
+                  $("<i>").attr("class", "retweet-icon")
+                ),
+                $("<span>").css("color", "#336699").text("Retweeted by " + tweet.retweet_user.name)
+              )
+            );
+          }
+
+          tweetView.append($("<div>").attr("class", "clearfix"));
+
+          
+          root.append(tweetView);
+          //root.append(debug);
+
+        });
+      };
+
+
+      renderTweets();
         
-        root.append(tweetView);
-        //root.append(debug);
-
-      });
 
       elm.removeChild(elm.querySelector("#twitter-login"));
 
