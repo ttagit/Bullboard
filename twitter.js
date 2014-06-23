@@ -325,7 +325,7 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
 
       },
       error: function(xhr, status, error) {
-        //alert(JSON.stringify(xhr));
+        alert(JSON.stringify(xhr));
         //alert(JSON.stringify(message));
         //alert(JSON.stringify(error));
         //alert(OAuth.addToURL(message.action, message.parameters));
