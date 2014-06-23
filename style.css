@@ -15268,15 +15268,16 @@ body{
 }
 
 #content {
-  width: 500px;
+  width: 550px;
+  padding-bottom: 83px; 
 }
 
 #tweets {
-  width: 480px;
+  width: 530px;
 }
 
 #input {
-	margin-bottom: 10px; border-bottom: 1px solid #eeeeee; padding-bottom: 40px;
+	position: fixed; bottom: 0px; background: #ffffff; z-index: 989; width: 100%; 
 }
 
 a.time-information{
