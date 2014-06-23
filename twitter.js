@@ -364,7 +364,7 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
           row.append(
 
              $("<div>").attr("class", "tweet-icon col-xs-2").append(
-              $("<img>").attr("src", user.profile_image_url_https).attr("class","img-circle")
+              $("<img>").attr("src", user.profile_image_url_https).attr("class","img-thumbnail")
             ),
 
 
