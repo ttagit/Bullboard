@@ -18,6 +18,7 @@
   "background": {
     "scripts":  [
       "library/jquery.min.js",
+      "library/jquery.timeago.js",
       "library/underscore.min.js",
       "library/sha1.js",
       "library/oauth.js",

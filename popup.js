@@ -9,7 +9,13 @@
     twitter.login();
   });
 
+  $("#loading").addClass('hide').removeClass('show');
+
   if (twitter.isAuthenticated()) {
+    loginFormElement.style.display = "none";
+
+    $("#welcome").addClass('hide').removeClass('show');
+    
     var root = document.querySelector("#content");
     
     var input = document.querySelector("#input");
@@ -19,25 +25,14 @@
     
 
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+
+      $("#loading").addClass('show').removeClass('hide');
       twitter.fetchTimelines(root,input,loading,tabs[0].url);
-
-      // var tweetInput = $("<div>").attr("id","newTweet").prepend(
-      //  $("<textarea>").attr("class","inputbox")
-      // );
-      
-      // tweetInput.append(
-      //   $("<button>").html("Tweet about this page").attr("id","sendTweet")
-      //   .click(function(){
-      //     twitter.postTweet(tweetInput,tabs[0].url);
-      //     })
-      // );
-
-      // $(input).append(tweetInput);
 
     });
 
   } else {
-    $("#loading").addClass('hide').removeClass('show');
+    $("#welcome").addClass('show').removeClass('hide');
     loginFormElement.style.display = "block";
   }
 })();

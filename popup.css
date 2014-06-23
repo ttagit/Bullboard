@@ -1,3 +1,8 @@
+body {
+  padding-top: 15px;
+}
+
+
 * {
   font-size: 12px;
 }
@@ -6,14 +11,6 @@ a {
   font-size: 14px;
   color: blue;
   text-decoration: none;
-}
-
-#twitter-login {
-  background: #3588cc;
-  margin: 20px;
-  padding: 20px;
-  color: white;
-  display: none;
 }
 
 #content {
