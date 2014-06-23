@@ -250,6 +250,98 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
       dataType: "json"
     });
   };
+
+  var reTweet = function(id,TheElement){
+    $(loading).addClass('show').removeClass('hide');
+    message.method = "POST";
+    message.action = "https://api.twitter.com/1.1/statuses/retweet/"+id+".json";
+    message.oauth_token = accessToken;
+
+    
+
+    OAuth.setTimestampAndNonce(message);
+    OAuth.SignatureMethod.sign(message, {
+      "consumerSecret": CONSUMER_SECRET,
+      "tokenSecret": accessTokenSecret
+    });
+
+    $.ajax({
+      type: "POST",
+      url: OAuth.addToURL(message.action, message.parameters),
+      //data: {status : encodeURIComponent($(tweetInput).find("textarea").val() +" " +url).replace(/'/g,"%27").replace(/"/g,"%22") },
+      success: function(data){
+        //alert(JSON.stringify(data));
+        $(TheElement).addClass('retweeted');
+        $(loading).addClass('hide').removeClass('show');
+
+      },
+      error: function(xhr, status, error) {
+        //alert(JSON.stringify(xhr));
+        //alert(JSON.stringify(message));
+        //alert(JSON.stringify(error));
+        //alert(OAuth.addToURL(message.action, message.parameters));
+        //alert(encodeURIComponent($(tweetInput).find("textarea").val() +" " + url).replace(/'/g,"%27").replace(/"/g,"%22"));
+
+        if (xhr.status === 401) {
+          //localStorage.removeItem("access_token");
+
+          //$(elm.querySelector("#twitter-login")).css("display", "block");
+        }
+      },
+      dataType: "json"
+    });
+  };
+
+  
+  var favIt = function(id,TheElement){
+    $(loading).addClass('show').removeClass('hide');
+    message.method = "POST";
+    message.action = "https://api.twitter.com/1.1/favorites/create.json";
+    message.oauth_token = accessToken;
+
+    delete message.parameters;
+
+    message.parameters = {
+      "oauth_consumer_key": CONSUMER_KEY,
+      "oauth_signature_method": "HMAC-SHA1",
+      "oauth_token": accessToken,
+      "id" : id 
+    }
+
+    OAuth.setTimestampAndNonce(message);
+    OAuth.SignatureMethod.sign(message, {
+      "consumerSecret": CONSUMER_SECRET,
+      "tokenSecret": accessTokenSecret
+    });
+
+    $.ajax({
+      type: "POST",
+      url: OAuth.addToURL(message.action, message.parameters),
+      //data: {status : encodeURIComponent($(tweetInput).find("textarea").val() +" " +url).replace(/'/g,"%27").replace(/"/g,"%22") },
+      success: function(data){
+        //alert(JSON.stringify(data));
+        $(TheElement).addClass('retweeted');
+        $(loading).addClass('hide').removeClass('show');
+
+      },
+      error: function(xhr, status, error) {
+        //alert(JSON.stringify(xhr));
+        //alert(JSON.stringify(message));
+        //alert(JSON.stringify(error));
+        //alert(OAuth.addToURL(message.action, message.parameters));
+        //alert(encodeURIComponent($(tweetInput).find("textarea").val() +" " + url).replace(/'/g,"%27").replace(/"/g,"%22"));
+
+        if (xhr.status === 401) {
+          //localStorage.removeItem("access_token");
+
+          //$(elm.querySelector("#twitter-login")).css("display", "block");
+        }
+      },
+      dataType: "json"
+    });
+  };
+
+  
   
 
   $.ajax({
@@ -313,14 +405,12 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
 
           
           $(retweet).click(function(){
-            in_reply_to_status_id = tweet.id_str;
-            $(tweetInput).find("textarea").val("@"+user.screen_name);
+            reTweet(tweet.id_str,retweet);
           });
 
           
           $(like).click(function(){
-            in_reply_to_status_id = tweet.id_str;
-            $(tweetInput).find("textarea").val("@"+user.screen_name);
+            favIt(tweet.id_str,like);
           });
 
           

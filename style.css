@@ -15283,3 +15283,7 @@ body{
 a.time-information{
 	padding-right: 15px;
 }
+
+.retweeted{
+	color: red;
+}
