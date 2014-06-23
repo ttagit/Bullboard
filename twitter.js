@@ -144,7 +144,7 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
       "oauth_consumer_key": CONSUMER_KEY,
       "oauth_signature_method": "HMAC-SHA1",
       "oauth_token": accessToken,
-      "count": 100
+      "count": 10
     }
   };
 
@@ -310,6 +310,20 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
             in_reply_to_status_id = tweet.id_str;
             $(tweetInput).find("textarea").val("@"+user.screen_name);
           });
+
+          
+          $(retweet).click(function(){
+            in_reply_to_status_id = tweet.id_str;
+            $(tweetInput).find("textarea").val("@"+user.screen_name);
+          });
+
+          
+          $(like).click(function(){
+            in_reply_to_status_id = tweet.id_str;
+            $(tweetInput).find("textarea").val("@"+user.screen_name);
+          });
+
+          
 
           var row = $("<div>").attr("class", "rows");
           var tweetTime = $("<a>").attr(
