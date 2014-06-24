@@ -1,7 +1,7 @@
 {
   "name": "TTAGIT",
   "description": "peer2peer twitter commenting",
-  "version": "0.1",
+  "version": "0.4",
   "manifest_version": 2,
   "content_scripts": [
     {
