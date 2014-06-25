@@ -448,7 +448,7 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
                   )
                 );
                 //source,
-          $(tweetTime).timeago();
+          
           
 
           row.append(
