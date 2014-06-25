@@ -8,16 +8,18 @@
 
 
 #content {
-  /*width: 550px;*/
+  width: 550px;
   padding-bottom: 83px; 
 }
 
 #tweets {
-  width: 400px;
+  /*width: 400px;*/
 }
 
 #input {
-	position: fixed; bottom: 0px; background: #ffffff; z-index: 989; width: 90%; 
+	position: fixed; bottom: 0px; background: #ffffff; z-index: 989; width: 100%; left:0px;
+  background: #e8e8e8;
+  padding-top: 13;
 }
 
 a.time-information{
