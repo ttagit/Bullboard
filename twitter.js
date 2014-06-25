@@ -144,7 +144,7 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
       "oauth_consumer_key": CONSUMER_KEY,
       "oauth_signature_method": "HMAC-SHA1",
       "oauth_token": accessToken,
-      "count": 10
+      "count": 20
     }
   };
 
@@ -386,16 +386,16 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
                       );
           $(source).html( "Tweeted through "+$(source).html() );
 
-          var replyBack = $("<a>").attr({"href":"javascript:void(0)","id":"reply"+tweet.id_str}).text("reply").prepend(
+          var replyBack = $("<a>").attr({"href":"javascript:void(0)","id":"reply"+tweet.id_str}).prepend(
               $('<i>').attr("class","fa fa-reply")
             );
 
-          var retweet =  $("<a>").attr({"href":"javascript:void(0)","id":"retweet"+tweet.id_str}).text("retweet").prepend(
+          var retweet =  $("<a>").attr({"href":"javascript:void(0)","id":"retweet"+tweet.id_str}).prepend(
               $('<i>').attr("class","fa fa-retweet")
             );
 
-          var like =  $("<a>").attr({"href":"javascript:void(0)","id":"like"+tweet.id_str}).text("like").prepend(
-              $('<i>').attr("class","fa fa-heart")
+          var like =  $("<a>").attr({"href":"javascript:void(0)","id":"like"+tweet.id_str}).prepend(
+              $('<i>').attr("class","fa fa-star")
             );
 
           $(replyBack).click(function(){
@@ -433,19 +433,20 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
                       ).text(normalizeDateTime(new Date(tweet.created_at)));
 
           var tweetInfo = 
-                $("<div>").attr("class", "tweet-info").append(
-
-                  $("<ul>").attr("class","list-inline pull-left").append(
-                    $("<li>").append(retweet),
-                    $("<li>").append(replyBack),
-                    $("<li>").append(like)
-                  ),
-
-
-
-                  $("<div>").attr("class","").append(
-                    $("<p>").attr("class","row").append(tweetTime)
+                $("<div>").attr("class", "tweet-info clearfix").append(
+                  $("<div>").attr("class", "row").append(
+                    $("<div>").attr("class", "col-xs-8").append(
+                      $("<button>").attr("class","btn btn-primary btn-xs").text("Follow @" + user.screen_name)
+                    ),
+                    $("<div>").attr("class", "col-xs-4").append(
+                      $("<ul>").attr("class","list-inline pull-right").append(
+                        $("<li>").append(replyBack),
+                        $("<li>").append(retweet),
+                        $("<li>").append(like)
+                      )
+                    )
                   )
+                  
                 );
                 //source,
           
@@ -453,47 +454,71 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
 
           row.append(
 
-             $("<div>").attr("class", "tweet-icon col-xs-2").append(
-              $("<img>").attr("src", user.profile_image_url_https).attr("class","i")
+            $("<div>").attr("class", "tweet-icon col-xs-2").append(
+              $("<img>").attr("src", user.profile_image_url_https).attr("class","img-rounded")
             ),
 
 
             $("<div>").attr("class", "tweet-detail col-xs-10").prepend(
 
-              $("<a>").attr(
-                  "href",
-                  "http://twitter.com/" + user.screen_name
-                ).attr("target", "_blank").text(user.name),
 
-              $("<div>").attr("class","well").prepend(
+              $("<div>").attr("class", "row").prepend(
 
-                $("<div>").html(normalizeTweetText(tweet)+"<hr/>"),
+                $("<div>").attr("class", "col-xs-6").prepend(
 
-                tweetInfo
-              )
+
+                  //username
+                  $("<a>").attr(
+                      "href",
+                      "http://twitter.com/" + user.screen_name
+                    ).attr("target", "_blank").attr("class", "username").text(user.name)
+                      
+                  ),
+                
+                $("<div>").attr("class", "col-xs-6").prepend(
+                      $("<div>").attr("class","pull-right").append(
+                        $("<p>").attr("class","").append(tweetTime)
+                      )
+                  )
+                
+
+                ),
+
+              $("<div>").attr("class", "row").prepend(
+
+                $("<div>").attr("class", "col-xs-12").prepend(
+
+                  $("<div>").attr("class","border").html(normalizeTweetText(tweet)),
+
+                  tweetInfo
+                      
+                  )
+                
+
+                )
 
                 
             )
 
           )
-          var tweetView = $("<div>").attr("class", "tweet").append(
+          var tweetView = $("<div>").attr("class", "tweet border").append(
             row);
 
 
           
 
-          tweetInfo.append(source);
+          //tweetInfo.append(source);
 
-          if (retweeted) {
-            tweetInfo.append(
-              $("<div>").attr("class", "retweet-info").append(
-                $("<span>").append(
-                  $("<i>").attr("class", "retweet-icon")
-                ),
-                $("<span>").css("color", "#336699").text("Retweeted by " + tweet.retweet_user.name)
-              )
-            );
-          }
+          // if (retweeted) {
+          //   tweetInfo.append(
+          //     $("<div>").attr("class", "retweet-info").append(
+          //       $("<span>").append(
+          //         $("<i>").attr("class", "retweet-icon")
+          //       ),
+          //       $("<span>").css("color", "#336699").text("Retweeted by " + tweet.retweet_user.name)
+          //     )
+          //   );
+          // }
 
           tweetView.append($("<div>").attr("class", "clearfix"));
 
@@ -510,8 +535,18 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
         
 
       elm.removeChild(elm.querySelector("#twitter-login"));
-      console.log(root);
       $(elm).append(root);
+      
+      $(elm).prepend(
+        
+        $("<div>").attr("id","header").attr("class","col-xs-12 border")
+        .prepend(
+          $("<h5>").attr("class","col-xs-12").html("<b class='bold-heading'>Tweets</b> for <i>" + url + "</i>")
+          )
+
+
+        );
+
       $(inputButton).append(tweetInput);
     },
     "error": function(xhr, status, error) {
@@ -579,8 +614,26 @@ function normalizeTweetText(tweet) {
 }
 
 function normalizeDateTime(date) {
+
+Date.prototype.getMonthName = function(lang) {
+    lang = lang && (lang in Date.locale) ? lang : 'en';
+    return Date.locale[lang].month_names[this.getMonth()];
+};
+
+Date.prototype.getMonthNameShort = function(lang) {
+    lang = lang && (lang in Date.locale) ? lang : 'en';
+    return Date.locale[lang].month_names_short[this.getMonth()];
+};
+
+Date.locale = {
+    en: {
+       month_names: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+       month_names_short: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    }
+};
   if (_.isDate(date)) {
-    return date.getFullYear() + "/" + zeroPadding(date.getMonth() + 1) + "/" + zeroPadding(date.getDate()) + " " + zeroPadding(date.getHours()) + ":" + zeroPadding(date.getMinutes()) + ":" + zeroPadding(date.getSeconds());
+    return date.getDate() + " " + date.getMonthNameShort();
+    //return date.getFullYear() + "/" + zeroPadding(date.getMonth() + 1) + "/" + zeroPadding(date.getDate()) + " " + zeroPadding(date.getHours()) + ":" + zeroPadding(date.getMinutes()) + ":" + zeroPadding(date.getSeconds());
   } else {
     throw new Error("argument isn`t prototype of Date");
   }
