@@ -132,6 +132,7 @@ Twitter.prototype.isAuthenticated = function() {
 };
 
 Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
+  //
   var accessToken = this.getAccessToken();
   var accessTokenSecret = this.getAccessTokenSecret();
 
@@ -254,7 +255,10 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
   var reTweet = function(id,TheElement){
     $(loading).addClass('show').removeClass('hide');
     message.method = "POST";
-    message.action = "https://api.twitter.com/1.1/statuses/retweet/"+id+".json";
+    //if(retweeted)
+      message.action = "https://api.twitter.com/1.1/statuses/retweet/"+id+".json";
+    // else
+    //   message.action = "https://api.twitter.com/1.1/statuses/destroy/"+id+".json";
     message.oauth_token = accessToken;
 
     
@@ -291,7 +295,6 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
       dataType: "json"
     });
   };
-
   
   var favIt = function(id,TheElement){
     $(loading).addClass('show').removeClass('hide');
@@ -356,6 +359,7 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
       //$("#sendTweet");
 
 
+
       renderTweets = function(){
         tweets.forEach(function(tweet) {
           var retweeted = false;
@@ -386,17 +390,29 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
                       );
           $(source).html( "Tweeted through "+$(source).html() );
 
-          var replyBack = $("<a>").attr({"href":"javascript:void(0)","id":"reply"+tweet.id_str}).prepend(
+          var replyBack = $("<a>").attr({"href":"javascript:void(0)","id":"reply"+tweet.id_str, "data-original-title":"Reply"}).prepend(
               $('<i>').attr("class","fa fa-reply")
             );
 
-          var retweet =  $("<a>").attr({"href":"javascript:void(0)","id":"retweet"+tweet.id_str}).prepend(
+          var retweet =  $("<a>").attr({"href":"javascript:void(0)","id":"retweet"+tweet.id_str,"data-original-title":"Retweet"}).prepend(
               $('<i>').attr("class","fa fa-retweet")
             );
 
-          var like =  $("<a>").attr({"href":"javascript:void(0)","id":"like"+tweet.id_str}).prepend(
+
+          
+
+          if(retweeted)
+            $(retweet).attr('class','retweeted');
+
+          var like =  $("<a>").attr({"href":"javascript:void(0)","id":"like"+tweet.id_str,"data-original-title":"Like"}).prepend(
               $('<i>').attr("class","fa fa-star")
             );
+
+
+          $(replyBack).tooltip();
+          $(retweet).tooltip();
+          $(like).tooltip();
+
 
           $(replyBack).click(function(){
             in_reply_to_status_id = tweet.id_str;
@@ -405,7 +421,10 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
 
           
           $(retweet).click(function(){
-            reTweet(tweet.id_str,retweet);
+            //if(retweeted)
+              reTweet(tweet.id_str,retweet);
+            // else
+            //   undoReTweet(tweet.id_str,retweet);
           });
 
           
