@@ -252,13 +252,60 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
     });
   };
 
+
+  var follow = function(userId,followElement,username,alreadyFollowing){
+    $(loading).addClass('show').removeClass('hide');
+    message.method = "POST";
+    if(alreadyFollowing)
+      message.action = "https://api.twitter.com/1.1/friendships/destroy.json";
+    else
+      message.action = "https://api.twitter.com/1.1/friendships/create.json";
+    message.oauth_token = accessToken;
+    message.parameters['user_id'] = userId;
+    if(!alreadyFollowing)
+      message.parameters['follow'] = true;    
+
+    OAuth.setTimestampAndNonce(message);
+    OAuth.SignatureMethod.sign(message, {
+      "consumerSecret": CONSUMER_SECRET,
+      "tokenSecret": accessTokenSecret
+    });
+
+
+    $.ajax({
+      type: "POST",
+      url: OAuth.addToURL(message.action, message.parameters),
+      //data: {status : encodeURIComponent($(tweetInput).find("textarea").val() +" " +url).replace(/'/g,"%27").replace(/"/g,"%22") },
+      success: function(data){
+        //alert(JSON.stringify(data));
+        $(loading).addClass('hide').removeClass('show');
+        if(!alreadyFollowing)
+          $(followElement).attr('following','true').text("Unfollow @"+username);
+        else
+          $(followElement).attr('following','false').text("Follow @"+username);
+
+      },
+      error: function(xhr, status, error) {
+        alert(JSON.stringify(xhr));
+        alert(JSON.stringify(message));
+        alert(JSON.stringify(error));
+        alert(OAuth.addToURL(message.action, message.parameters));
+        
+        if (xhr.status === 401) {
+          //localStorage.removeItem("access_token");
+
+          //$(elm.querySelector("#twitter-login")).css("display", "block");
+        }
+      },
+      dataType: "json"
+    });
+
+  };
+
   var reTweet = function(id,TheElement){
     $(loading).addClass('show').removeClass('hide');
     message.method = "POST";
-    //if(retweeted)
-      message.action = "https://api.twitter.com/1.1/statuses/retweet/"+id+".json";
-    // else
-    //   message.action = "https://api.twitter.com/1.1/statuses/destroy/"+id+".json";
+    message.action = "https://api.twitter.com/1.1/statuses/retweet/"+id+".json";
     message.oauth_token = accessToken;
 
     
@@ -451,11 +498,14 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
                         new Date(tweet.created_at)
                       ).text(normalizeDateTime(new Date(tweet.created_at)));
 
+          var followButton = $("<button>").attr("class","btn btn-primary btn-xs").attr('following','false').text("Follow @" + user.screen_name);
+          if(user.following)
+            $(followButton).attr('following','true').text("Unfollow @" + user.screen_name);
           var tweetInfo = 
                 $("<div>").attr("class", "tweet-info clearfix").append(
                   $("<div>").attr("class", "row").append(
                     $("<div>").attr("class", "col-xs-8").append(
-                      $("<button>").attr("class","btn btn-primary btn-xs").text("Follow @" + user.screen_name)
+                      followButton
                     ),
                     $("<div>").attr("class", "col-xs-4").append(
                       $("<ul>").attr("class","list-inline pull-right").append(
@@ -468,6 +518,14 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
                   
                 );
                 //source,
+
+
+          $(followButton).click(function(){
+            if( JSON.parse( $(followButton).attr('following') ) )
+              follow(user.id,followButton,user.screen_name,true);
+            else
+              follow(user.id,followButton,user.screen_name,false);
+          });
           
           
 
