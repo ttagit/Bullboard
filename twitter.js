@@ -145,7 +145,7 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
       "oauth_consumer_key": CONSUMER_KEY,
       "oauth_signature_method": "HMAC-SHA1",
       "oauth_token": accessToken,
-      "count": 20
+      "count": 100
     }
   };
 
@@ -527,6 +527,14 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
               follow(user.id,followButton,user.screen_name,false);
           });
           
+          var media = $("<div>").attr("class", "medias");
+          if(tweet.entities.media && tweet.entities.media.length){
+            var mElements = tweet.entities.media[0];
+
+            $(media).append(
+              $("<img>").attr("src",mElements.media_url)
+              );
+          };
           
 
           row.append(
@@ -564,9 +572,10 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
               $("<div>").attr("class", "row").prepend(
 
                 $("<div>").attr("class", "col-xs-12").prepend(
-
-                  $("<div>").attr("class","border").html(normalizeTweetText(tweet)),
-
+                  //
+                  //tweet.entities.media
+                  $("<div>").attr("class","border").html((normalizeTweetText(tweet))),
+                  media,
                   tweetInfo
                       
                   )
