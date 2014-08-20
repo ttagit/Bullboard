@@ -576,7 +576,8 @@ Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
                   //tweet.entities.media
                   $("<div>").attr("class","border").html((normalizeTweetText(tweet))),
                   media,
-                  tweetInfo
+                  tweetInfo,
+                  source
                       
                   )
                 
