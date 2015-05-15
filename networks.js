@@ -1,26 +1,32 @@
 const TWITTER_USER_ID_STORAGE_KEY = "userid";
 
-var Twitter = function() {};
+var Networks = function() {};
 
-Twitter.prototype.getAccessToken = function() {
+
+
+//I KNOW THIS IS TWITTER. BUT I WILL CHANGE IT.
+  
+//
+
+Networks.prototype.getAccessToken = function() {
   var accessToken = localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
 
   return _.isString(accessToken) ? accessToken : null;
 };
 
-Twitter.prototype.getAccessTokenSecret = function() {
+Networks.prototype.getAccessTokenSecret = function() {
   var accessTokenSecret = localStorage.getItem(ACCESS_TOKEN_SECRET_STORAGE_KEY);
 
   return _.isString(accessTokenSecret) ? accessTokenSecret : null;
 };
 
-Twitter.prototype.getUserID = function() {
+Networks.prototype.getUserID = function() {
   var userid = Number(localStorage.getItem(TWITTER_USER_ID_STORAGE_KEY));
 
   return (_.isNumber(userid) && !_.isNaN(userid)) ? userid : null;
 };
 
-Twitter.prototype.parseToken = function(data) {
+Networks.prototype.parseToken = function(data) {
   if (_.isString(data)) {
     var parsedToken = {};
 
@@ -36,7 +42,7 @@ Twitter.prototype.parseToken = function(data) {
   return null;
 };
 
-Twitter.prototype.login = function() {
+Networks.prototype.login = function() {
   var message = {
     "method": "GET",
     "action": "https://api.twitter.com/oauth/request_token",
@@ -79,7 +85,7 @@ Twitter.prototype.login = function() {
   );
 };
 
-Twitter.prototype.sign = function(pin, cb) {
+Networks.prototype.twitter_sign = function(pin, cb) {
   var requestToken = this.request_token;
   var requestTokenSecret = this.request_token_secret;
 
@@ -121,17 +127,53 @@ Twitter.prototype.sign = function(pin, cb) {
   });
 };
 
-Twitter.prototype.save = function(accessToken, accessTokenSecret, userid) {
+Networks.prototype.save = function(accessToken, accessTokenSecret, userid) {
   localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, accessToken);
   localStorage.setItem(ACCESS_TOKEN_SECRET_STORAGE_KEY, accessTokenSecret);
   localStorage.setItem(TWITTER_USER_ID_STORAGE_KEY, userid);
 };
 
-Twitter.prototype.isAuthenticated = function() {
+Networks.prototype.isAuthenticated = function() {
   return !_.isNull(this.getAccessToken()) && !_.isNull(this.getAccessTokenSecret()) && _.isNumber(this.getUserID()) ? true : false;
 };
 
-Twitter.prototype.fetchTimelines = function(elm,inputButton,loading,url) {
+
+Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
+  var searchUrl = "https://graph.facebook.com/search?q=" + url+"&type=user&"+localStorage.getItem('fbToken');
+  $(loading).addClass('hide').removeClass('show');
+  $.ajax({
+    type: "GET",
+    url: searchUrl,
+    success: function(data){
+      var content_div = $("<div>").attr("id","fb_content_div").attr("class","col-xs-12");
+      if(data.data.length<1){
+        var heading = $("<h3>").text("No results found for the url "+url);
+        content_div.append(heading);
+        $(elm).html(content_div);
+      }
+
+        
+    },
+    error: function(xhr, status, error) {
+      alert(JSON.stringify(xhr));
+      //alert(JSON.stringify(message));
+      //alert(JSON.stringify(error));
+      //alert(OAuth.addToURL(message.action, message.parameters));
+      //alert(encodeURIComponent($(tweetInput).find("textarea").val() +" " + url).replace(/'/g,"%27").replace(/"/g,"%22"));
+
+      if (xhr.status === 401) {
+        //localStorage.removeItem("access_token");
+
+        //$(elm.querySelector("#twitter-login")).css("display", "block");
+      }
+    },
+    dataType: "json"
+  });
+
+  
+};
+
+Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
   //
   var accessToken = this.getAccessToken();
   var accessTokenSecret = this.getAccessTokenSecret();
