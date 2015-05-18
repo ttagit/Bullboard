@@ -153,8 +153,7 @@ Networks.prototype.showSentiments = function(elm,loading,url){
     url: "http://ttagit.demo.hatchitup.com:8990/api/sentiments?url="+url,
     success: function(data){
 
-      
-
+    
       $(loading).addClass('hide').removeClass('show');
 
       
@@ -302,11 +301,6 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
         $("<button>").html("Post this on facebook.").attr("id","sendPost").attr("class","btn btn-default pull-right")
         .click(function(){
               sendPost();
-              $(fbMsg).html("Posted your message");
-              setTimeout(function() {
-                $(fbMsg).fade().html("");
-              }, 2000);
-              $(postInput).find("textarea").val('');
               return false;
           })
         )
@@ -326,6 +320,12 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
         },
       success: function(data){
         $(loading).addClass('hide').removeClass('show');
+        $(fbMsg).html("Posted your message");
+          setTimeout(function() {
+            $(fbMsg).fade().html("");
+          }, 2000);
+          $(postInput).find("textarea").val('');
+          
       },
       error: function(xhr, status, error) {
         $(loading).addClass('hide').removeClass('show');
