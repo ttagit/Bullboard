@@ -154,7 +154,8 @@ Networks.prototype.showSentiments = function(elm,loading,url,cb){
     success: function(data){      
 
       sentiments_div.append(
-             $("<p>").html("The website seems quite <i>"+data.type + "</i>  in behaviour for the above entities with a score of " + parseInt(parseFloat(data.score)*100) +"%")
+             $("<p>").html("The website seems quite <i>"+data.type + "</i>  in behaviour for the above entities with a score of " + parseInt(parseFloat(data.score)*100) +"%"),
+             $("<p>").html("and for more on page behaviour and entities <a href='http://en.wikipedia.org/wiki/Sentiment_analysis' target='_blank'>click here</a>")
       );
 
       getEntities();
@@ -390,17 +391,18 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
 
           //
 
-          var dp = $("<div>").append(
-            $("<img>").attr({"src":"https://graph.facebook.com/"+data.id+"/picture"}),
-            $("<p>").text("Hi,"+data.first_name)
-            )
+          var dp = $("<img>").attr({"src":"https://graph.facebook.com/"+data.id+"/picture"}).attr({"class":"pull-right"});
+          var name = $("<div>").append(
+            $("<p>").text("Hi,"+data.first_name),
+            logout_fb
+            ).attr({"class":"pull-right"})
           var analytics_div = $("<div>").attr("id","analytics_div").attr("class","col-xs-12 border");
           analytics_div.append(
 
             $("<div>").attr("class","row").append(
 
               $("<div>").attr("class","col-xs-8").append(
-                  $("<p>").text("Facebook analytics for the page"),//title
+                  $("<h5>").text("Facebook analytics for the page"),//title
                   $("<ul>").attr('class','stats').append( // list of analytics
                     $("<li>").text(analytics.share_count + " shares,"),
                     $("<li>").text(analytics.like_count + " likes,"),
@@ -408,7 +410,7 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
                     $("<li>").text(analytics.click_count+ " clicks")
                     )
                 ),
-              $("<div>").attr("class","col-xs-4").append(dp,logout_fb)
+              $("<div>").attr("class","col-xs-4").append(name,dp)
               )
             
             )
