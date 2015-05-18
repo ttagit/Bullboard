@@ -229,6 +229,7 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
 
   
   var like = null;
+  var share = null;
   var content_div = $("<div>").attr("id","fb_content_div").attr("class","col-xs-12 border");
   var post_div = $("<div>").attr("id","fb_post_div").attr("class","col-xs-12");
 
@@ -287,9 +288,14 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
           else
             removeLike(like.attr('id'));
         });
-
+  
+  share =  
+      $("<a>")
+        .attr({"target":"_blank","href":"http://www.facebook.com/sharer/sharer.php?u="+url})
+        .text(" Share this article/page on Facebook.")
+  
   //append like
-  content_div.append(like);
+  content_div.append(like,share);
 
 
   var fbMsg = $("<div>").attr({'id':'fbMsg'});
@@ -332,7 +338,7 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
       },
       error: function(xhr, status, error) {
         $(loading).addClass('hide').removeClass('show');
-        //alert(JSON.stringify(xhr));
+        alert(JSON.stringify(xhr));
         //alert(JSON.stringify(message));
         //alert(JSON.stringify(error));
         //alert(OAuth.addToURL(message.action, message.parameters));

@@ -30,59 +30,13 @@ chrome.extension.onRequest.addListener(function(req, sender, res) {
 //URL FOR INSIGHT
 //https://graph.facebook.com/fql?q=SELECT%20url%20FROM%20url_like%20WHERE%20user_id=100000057672522%20AND%20url=%27http://google.com%27
 
-// var url = 'http://ttagit.com';
-
-// var _redirectURL = "";
-
-
-// chrome.webRequest.onBeforeRequest.addListener(
-// function(details) {
-
-//   var DOMAIN = null;
-//   var ORIGIN = null;
-//   var OLD_DOMAIN = null;
-//   var OLD_ORIGIN = null;
-
-//   var getParameterByName = function (name,url) {
-//       name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-//       var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-//           results = regex.exec(url || details.url);
-//       return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-//   }
-
-//     //step1 get full url.
-//     var DOMAIN = null;
-//     var OLD_DOMAIN = null;
-//     if (url.indexOf("://") > -1) {
-//         DOMAIN = url.split('/')[2];
-//     }
-//     else {
-//         DOMAIN = url.split('/')[0];
-//     }
-//     OLD_DOMAIN = getParameterByName('domain');
-
-//     //step2 get redirect_uri
-//     var redirect_uri = decodeURIComponent(getParameterByName('redirect_uri',details.url));        
-//         redirect_uri = redirect_uri.replace(OLD_DOMAIN, DOMAIN);
-//         redirect_uri_origin = getParameterByName('origin',redirect_uri);
-//         redirect_uri = redirect_uri.replace(redirect_uri_origin,DOMAIN);
-//         redirect_uri = encodeURIComponent(redirect_uri);
-   
-//     //step3 genereate new url from new URI
-//     var newUrl = "https://www.facebook.com/connect/ping?client_id=453827841445663&domain="+DOMAIN+"&origin=1&redirect_uri="+redirect_uri+"&response_type=token%2Csigned_request%2Ccode&sdk=joey";
-
-//     return {redirectUrl: newUrl};
-    
-// },
-// {urls: ["https://www.facebook.com/connect/ping*"]},
-// ["blocking"]);
 
 
 
 //Save token after logging in
 var successURL = 'https://www.facebook.com/connect/login_success.html';
 function onFacebookLogin() {
-    if (!localStorage.fbToken) {
+    if (!localStorage.getItem('fbToken')) {
         chrome.tabs.getAllInWindow(null, function(tabs) {
             for (var i = 0; i < tabs.length; i++) {
                 if (tabs[i].url.indexOf(successURL) == 0) {
