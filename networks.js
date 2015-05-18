@@ -320,7 +320,7 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
         },
       success: function(data){
         $(loading).addClass('hide').removeClass('show');
-        $(fbMsg).html("Posted your message");
+        $(fbMsg).html("Your post has been published.");
           setTimeout(function() {
             $(fbMsg).fade().html("");
           }, 2000);
