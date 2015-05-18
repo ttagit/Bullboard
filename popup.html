@@ -32,7 +32,8 @@
       <!-- Nav tabs -->
       <ul class="nav nav-tabs" role="tablist">
         <li role="presentation"><a href="#twitter" aria-controls="twitter" role="tab" data-toggle="tab">Twitter</a></li>
-        <li role="presentation" class="active"><a href="#facebook" aria-controls="facebook" role="tab" data-toggle="tab">Facebook</a></li>
+        <li role="presentation"><a href="#facebook" aria-controls="facebook" role="tab" data-toggle="tab">Facebook</a></li>
+        <li role="presentation" class="active"><a href="#behaviour" aria-controls="facebook" role="tab" data-toggle="tab">Page Behaviour</a></li>
       </ul>
 
       <!-- Tab panes -->
@@ -59,10 +60,7 @@
             </div>
           </div>
         </div>
-        <div role="tabpanel" class="tab-pane active" id="facebook">
-
-          <div id="fb-root"></div>
-          
+        <div role="tabpanel" class="tab-pane" id="facebook">          
 
           <div class="row">
             <div id="fb_loading" class="col-xs-7">
@@ -79,11 +77,25 @@
             <div id="facebook-login" class="col-xs-12">
               <a target="_blank" href="https://www.facebook.com/dialog/oauth?client_id=879134568787252&response_type=token&scope=publish_actions&redirect_uri=http://www.facebook.com/connect/login_success.html">Facebook Connect</a>
               <p>
-                Connect your facebook account.
+                Connect your facebook account to use this.
               </p>
             </div>
           </div>
           
+        </div>
+
+        <div role="tabpanel" class="tab-pane active" id="behaviour">
+          
+          <div class="row">
+            <div id="b_loading" class="col-xs-7">
+              <img src="ajax-loader.gif">
+            </div>
+          </div>
+
+          <div id="b_content" class="row">
+
+          </div>
+
         </div>
       </div>
 

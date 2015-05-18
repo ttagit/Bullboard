@@ -1,17 +1,17 @@
 (function(undefined) {
   var bgPage = chrome.extension.getBackgroundPage();
-  var twitter = bgPage.getNetworksApi();
+  var network = bgPage.getNetworksApi();
 
   var loginFormElement = document.querySelector("#twitter-login");
   loginFormElement.addEventListener("click", function() {
     $("#loading").addClass('show').removeClass('hide');
     $("#loading > #loadingInformation").html("Redirecting you to twitter autentication");
-    twitter.login();
+    network.login();
   });
 
   $("#loading").addClass('hide').removeClass('show');
 
-  if (twitter.isAuthenticated()) {
+  if (network.isAuthenticated()) {
     loginFormElement.style.display = "none";
 
     $("#welcome").addClass('hide').removeClass('show');
@@ -27,7 +27,7 @@
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 
       $("#loading").addClass('show').removeClass('hide');
-      twitter.fetchTwitter(root,input,loading,tabs[0].url);
+      network.fetchTwitter(root,input,loading,tabs[0].url);
 
     });
 
@@ -47,9 +47,18 @@
 
       chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         $("#fb_loading").addClass('show').removeClass('hide');
-        twitter.fetchFacebook(fb_root,fb_input,fb_loading,tabs[0].url);
+        network.fetchFacebook(fb_root,fb_input,fb_loading,tabs[0].url);
       });
   }
+
+
+  var  b_loading = document.querySelector("#b_loading")
+      ,b_content = document.querySelector("#b_content");
+
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    $("#b_loading").addClass('show').removeClass('hide');
+    network.showSentiments(b_content,b_loading,tabs[0].url);
+  });
 
 
 })();

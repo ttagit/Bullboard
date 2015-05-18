@@ -138,6 +138,91 @@ Networks.prototype.isAuthenticated = function() {
 };
 
 
+Networks.prototype.showSentiments = function(elm,loading,url){
+  var message_div = $("<div>").attr("id","b_content_div").attr("class","col-xs-12 border");
+  var sentiments_div = $("<div>").attr("id","b_sentiments_div").attr("class","col-xs-12 border");
+  var entities_div = $("<div>").attr("id","b_entities_div").attr("class","col-xs-12");
+
+  $(loading).addClass('show').removeClass('hide');
+
+  message_div.append( $("<h4>").text("Page behaviour and entities") );
+
+  //sentiments
+  $.ajax({
+    type: "GET",
+    url: "http://ttagit.demo.hatchitup.com:8990/api/sentiments?url="+url,
+    success: function(data){
+
+      
+
+      $(loading).addClass('hide').removeClass('show');
+
+      
+
+      sentiments_div.append(
+             $("<p>").text(data.type + " behaviour with a score of " + data.score)
+      );
+      
+      $(elm).append(message_div,sentiments_div,entities_div);
+    },
+    error: function(xhr, status, error) {
+      //alert(JSON.stringify(xhr));
+      //alert(JSON.stringify(message));
+      //alert(JSON.stringify(error));
+      //alert(OAuth.addToURL(message.action, message.parameters));
+      //alert(encodeURIComponent($(tweetInput).find("textarea").val() +" " + url).replace(/'/g,"%27").replace(/"/g,"%22"));
+
+      if (xhr.status === 401) {
+        //localStorage.removeItem("access_token");
+
+        //$(elm.querySelector("#twitter-login")).css("display", "block");
+      }
+    },
+    dataType: "json"
+  });
+
+  //entities
+  $.ajax({
+    type: "GET",
+    url: "http://ttagit.demo.hatchitup.com:8990/api/entities?url="+url,
+    success: function(data){
+
+      $(loading).addClass('hide').removeClass('show');
+
+      var list = $("<ul>").attr({'class':'sentiments'});
+      $.each(data,function(index,value){
+        //if(value.text)
+        list.append(
+          $("<li>").text("Type : " + value.type)
+          )
+        if(index == (data.length-1)  || (data.length==1 && index==0))
+          entities_div.append(list);
+      });
+      
+      
+      $(elm).append(message_div,sentiments_div,entities_div);
+    },
+    error: function(xhr, status, error) {
+      //alert(JSON.stringify(xhr));
+      //alert(JSON.stringify(message));
+      //alert(JSON.stringify(error));
+      //alert(OAuth.addToURL(message.action, message.parameters));
+      //alert(encodeURIComponent($(tweetInput).find("textarea").val() +" " + url).replace(/'/g,"%27").replace(/"/g,"%22"));
+
+      if (xhr.status === 401) {
+        //localStorage.removeItem("access_token");
+
+        //$(elm.querySelector("#twitter-login")).css("display", "block");
+      }
+    },
+    dataType: "json"
+  });
+  
+
+  
+}
+
+
 Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
 
   
@@ -275,12 +360,6 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
     url: "https://api.facebook.com/method/links.getStats?urls="+url+"&format=json",
     success: function(data){
       $(loading).addClass('hide').removeClass('show');
-      var share_count = data[0].share_count,
-          like_count = data[0].like_count,
-          comment_count = data[0].comment_count,
-          total_count = data[0].total_count,
-          click_count = data[0].click_count,
-          comments_fbid =  data[0].comments_fbid
 
       var analytics = data[0];
 
