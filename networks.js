@@ -291,9 +291,15 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
         });
   
   share =  
+    $("<p>").append(
+
       $("<a>")
         .attr({"target":"_blank","href":"http://www.facebook.com/sharer/sharer.php?u="+url})
         .text(" Share this article/page on Facebook.")
+        .prepend(
+              $('<i>').attr("class","fa fa-share")
+        )
+  )
   
   //append like
   content_div.append(like,share);
