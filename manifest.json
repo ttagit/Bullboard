@@ -20,6 +20,7 @@
       "library/jquery.min.js",
       "library/underscore.min.js",
       "library/bootstrap.min.js",
+      "library/chart.min.js",
       "library/sha1.js",
       "library/oauth.js",
       "const.js",
