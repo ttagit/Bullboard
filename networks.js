@@ -461,6 +461,7 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
         $("<button>").html("Tweet about this page").attr("id","sendTweet").attr("class","btn btn-default pull-right")
         .click(function(){
               sendTweet();
+              return false;
           })
         )
 
@@ -499,7 +500,7 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
       success: function(data){
         //alert(JSON.stringify(data));
         tweets.unshift(data);
-        renderTweets();
+        renderTweets(true);
         $(tweetInput).find("textarea").val("");
         $(loading).addClass('hide').removeClass('show');
       },
@@ -669,14 +670,31 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
     "success": function(data) {
       $(loading).addClass('hide');
       tweets = data.statuses;
-      var root = $("<div>").attr("id", "tweets").attr("class", "col-xs-12");
+      
 
       //$("#sendTweet");
 
 
 
-      renderTweets = function(){
-        tweets.forEach(function(tweet) {
+      renderTweets = function(y){
+
+        var root = $("<div>").attr("id", "tweets").attr("class", "col-xs-12");
+        $(loading).addClass('show').removeClass('hide');
+        $(elm).html('');
+
+        var loadView = function(){
+          $(elm).append(
+          
+                $("<div>").attr("id","header").attr("class","col-xs-12 border")
+                .prepend(
+                  $("<h5>").attr("class","col-xs-12").html("<b class='bold-heading'>Tweets</b> for <i>" + url + "</i>")
+                  ),
+                root
+          );
+          $(inputButton).html(tweetInput);
+        };
+        
+        tweets.forEach(function(tweet,index) {
           var retweeted = false;
 
           if (_.has(tweet, "retweeted_status")) {
@@ -859,50 +877,34 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
           var tweetView = $("<div>").attr("class", "tweet border").append(
             row);
 
-
-          
-
-          //tweetInfo.append(source);
-
-          // if (retweeted) {
-          //   tweetInfo.append(
-          //     $("<div>").attr("class", "retweet-info").append(
-          //       $("<span>").append(
-          //         $("<i>").attr("class", "retweet-icon")
-          //       ),
-          //       $("<span>").css("color", "#336699").text("Retweeted by " + tweet.retweet_user.name)
-          //     )
-          //   );
-          // }
-
           tweetView.append($("<div>").attr("class", "clearfix"));
 
           
           root.append(tweetView);
+          if(tweets.length-1 == index)
+            loadView();
+          
           $(loading).addClass('hide').removeClass('show');
           //root.append(debug);
 
         });
+  
+        
+
       };
 
+
+      
 
       renderTweets();
         
 
       elm.removeChild(elm.querySelector("#twitter-login"));
-      $(elm).append(root);
       
-      $(elm).prepend(
-        
-        $("<div>").attr("id","header").attr("class","col-xs-12 border")
-        .prepend(
-          $("<h5>").attr("class","col-xs-12").html("<b class='bold-heading'>Tweets</b> for <i>" + url + "</i>")
-          )
+      
+      
 
-
-        );
-
-      $(inputButton).append(tweetInput);
+      
     },
     "error": function(xhr, status, error) {
       alert(JSON.stringify(xhr));
