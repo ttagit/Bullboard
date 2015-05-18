@@ -31,13 +31,13 @@
 
       <!-- Nav tabs -->
       <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#twitter" aria-controls="twitter" role="tab" data-toggle="tab">Twitter</a></li>
-        <li role="presentation"><a href="#facebook" aria-controls="facebook" role="tab" data-toggle="tab">Facebook</a></li>
+        <li role="presentation"><a href="#twitter" aria-controls="twitter" role="tab" data-toggle="tab">Twitter</a></li>
+        <li role="presentation" class="active"><a href="#facebook" aria-controls="facebook" role="tab" data-toggle="tab">Facebook</a></li>
       </ul>
 
       <!-- Tab panes -->
       <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="twitter">
+        <div role="tabpanel" class="tab-pane" id="twitter">
           <div class="row">
             <div id="loading" class="col-xs-7">
               <p class="loadingInformation">
@@ -59,7 +59,10 @@
             </div>
           </div>
         </div>
-        <div role="tabpanel" class="tab-pane" id="facebook">
+        <div role="tabpanel" class="tab-pane active" id="facebook">
+
+          <div id="fb-root"></div>
+          
 
           <div class="row">
             <div id="fb_loading" class="col-xs-7">
@@ -69,6 +72,8 @@
           <div id="fb_input">
             
           </div>
+
+
 
           <div id="fb_content" class="row">
             <div id="facebook-login" class="col-xs-12">

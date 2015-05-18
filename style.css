@@ -25,9 +25,25 @@
   width: 550px;
   padding-bottom: 83px; 
 }
-
+#fb_content {
+  width: 550px;
+  padding-bottom: 83px; 
+}
 #tweets {
   /*width: 400px;*/
+}
+
+ul.stats {
+	list-style: none;
+	display: inline;
+	padding: 0px;
+}
+ul.stats li {
+	display: inline;
+	padding: 10px;
+}
+ul.stats li:first-child{
+	padding: 10px 10px 10px 0px;
 }
 
 #input {

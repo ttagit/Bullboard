@@ -139,20 +139,166 @@ Networks.prototype.isAuthenticated = function() {
 
 
 Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
-  var searchUrl = "https://graph.facebook.com/search?q=" + url+"&type=user&"+localStorage.getItem('fbToken');
-  $(loading).addClass('hide').removeClass('show');
+
+  
+  var like = null;
+  var content_div = $("<div>").attr("id","fb_content_div").attr("class","col-xs-12 border");
+  var post_div = $("<div>").attr("id","fb_post_div").attr("class","col-xs-12");
+
+
+  var createLike = function(){
+    
+    $(loading).addClass('show').removeClass('hide');
+    $.ajax({
+      type:"POST",
+      url:"https://graph.facebook.com/me/og.likes?"+localStorage.getItem('fbToken'),
+      data :{
+        object:url
+      },
+      success:function(data){
+        like.attr({"id":data.id});
+        $(loading).addClass('hide').removeClass('show');
+        like.text("Unlike this article/page on Facebook");
+
+      },
+      error:function(err){
+        
+        $(loading).addClass('hide').removeClass('show');
+        like.text("Some error, click to retry.");
+      }
+    });
+  }
+  var removeLike = function(id){
+    
+    $(loading).addClass('show').removeClass('hide');
+    $.ajax({
+      type:"DELETE",
+      url:"https://graph.facebook.com/"+id+"?"+localStorage.getItem('fbToken'),
+      success:function(data){
+        like.removeAttr("id");
+        $(loading).addClass('hide').removeClass('show');
+        like.text("Like this article/page on Facebook");
+
+      },
+      error:function(err){
+        
+        $(loading).addClass('hide').removeClass('show');
+        like.text("Some error, click to retry.");
+      }
+    });
+  }
+  
+
+  like =  
+      $("<a>")
+        .attr({"href":"javascript:void(0)","data-original-title":"Like"}).text(" Like this article/page on Facebook.")
+        .prepend(
+              $('<i>').attr("class","fa fa-star")
+        ).click(function(){
+          if(typeof(like.attr('id')) === "undefined")
+            createLike();
+          else
+            removeLike(like.attr('id'));
+        });
+
+  //append like
+  content_div.append(like);
+
+
+  var fbMsg = $("<div>").attr({'id':'fbMsg'});
+  var postInput = $("<div>").attr("id","newstatues").attr("class","col-xs-12").append(
+    
+    fbMsg,
+
+    $("<form>").attr("role","form").append(
+
+      $("<div>").attr("class","form-group").append(
+        $("<textarea>").attr("class","inputbox form-control").attr("placeholder","What do you think of this article/page?"),
+        $("<button>").html("Post this on facebook.").attr("id","sendPost").attr("class","btn btn-default pull-right")
+        .click(function(){
+              sendPost();
+              $(fbMsg).html("Posted your message");
+              setTimeout(function() {
+                $(fbMsg).fade().html("");
+              }, 2000);
+              $(postInput).find("textarea").val('');
+              return false;
+          })
+        )
+
+      )
+  );
+
+  var sendPost = function(){
+      $(loading).addClass('show').removeClass('hide');
+
+      $.ajax({
+        type: "POST",
+        url: "https://graph.facebook.com/v2.3/me/feed?"+localStorage.getItem('fbToken'),
+        data : {
+          message : $(postInput).find("textarea").val(),
+          link : url
+        },
+      success: function(data){
+        $(loading).addClass('hide').removeClass('show');
+      },
+      error: function(xhr, status, error) {
+        $(loading).addClass('hide').removeClass('show');
+        //alert(JSON.stringify(xhr));
+        //alert(JSON.stringify(message));
+        //alert(JSON.stringify(error));
+        //alert(OAuth.addToURL(message.action, message.parameters));
+        //alert(encodeURIComponent($(tweetInput).find("textarea").val() +" " + url).replace(/'/g,"%27").replace(/"/g,"%22"));
+
+        if (xhr.status === 401) {
+          //localStorage.removeItem("access_token");
+
+          //$(elm.querySelector("#twitter-login")).css("display", "block");
+        }
+      },
+      dataType: "json"
+    });
+  };
+
+
+  
+  
+
+  post_div.append(postInput);
+
+
+
+
+  //analytics
   $.ajax({
     type: "GET",
-    url: searchUrl,
+    url: "https://api.facebook.com/method/links.getStats?urls="+url+"&format=json",
     success: function(data){
-      var content_div = $("<div>").attr("id","fb_content_div").attr("class","col-xs-12");
-      if(data.data.length<1){
-        var heading = $("<h3>").text("No results found for the url "+url);
-        content_div.append(heading);
-        $(elm).html(content_div);
-      }
+      $(loading).addClass('hide').removeClass('show');
+      var share_count = data[0].share_count,
+          like_count = data[0].like_count,
+          comment_count = data[0].comment_count,
+          total_count = data[0].total_count,
+          click_count = data[0].click_count,
+          comments_fbid =  data[0].comments_fbid
 
-        
+      var analytics = data[0];
+
+      $(loading).addClass('hide');
+
+      var analytics_div = $("<div>").attr("id","analytics_div").attr("class","col-xs-12 border");
+      analytics_div.append(
+        $("<h4>").text("Facebook analytics"),//title
+        $("<ul>").attr('class','stats').append( // list of analytics
+          $("<li>").text(analytics.share_count + " shares,"),
+          $("<li>").text(analytics.like_count + " likes,"),
+          $("<li>").text(analytics.comment_count + " comments"),
+          $("<li>").text(analytics.click_count+ " clicks")
+          )
+        )
+
+      content_div.append(analytics_div);
+      $(elm).append(analytics_div,content_div,post_div);
     },
     error: function(xhr, status, error) {
       //alert(JSON.stringify(xhr));
@@ -169,7 +315,9 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
     },
     dataType: "json"
   });
+  
 
+  
   
 };
 
@@ -238,7 +386,6 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
         )
 
       )
-   
   );
   //var debug = $("<div>").attr("id", "debug");
   //debug.html(JSON.stringify(OAuth.addToURL(message.action, message.parameters)));
