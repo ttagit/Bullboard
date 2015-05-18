@@ -401,7 +401,7 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
 
             $("<div>").attr("class","row").append(
 
-              $("<div>").attr("class","col-xs-8").append(
+              $("<div>").attr("class","col-xs-9").append(
                   $("<h5>").text("Facebook analytics for the page"),//title
                   $("<ul>").attr('class','stats').append( // list of analytics
                     $("<li>").text(analytics.share_count + " shares,"),
@@ -410,7 +410,7 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
                     $("<li>").text(analytics.click_count+ " clicks")
                     )
                 ),
-              $("<div>").attr("class","col-xs-4").append(name,dp)
+              $("<div>").attr("class","col-xs-3").append(name,dp)
               )
             
             )
