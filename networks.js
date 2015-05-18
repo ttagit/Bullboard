@@ -352,7 +352,16 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
   post_div.append(postInput);
 
 
-
+  var logout_fb = $("<button>").attr({'class':'btn btn-default btn-xs'})
+  .text(" Logout")
+  .append(
+    $("<i>").attr({'class':'fa fa-user-times'})
+    )
+  .click(function(){
+    localStorage.removeItem('fbToken');
+    alert("You are not logged out from facebook");
+    window.reload();
+  })
 
   //analytics
   $.ajax({
@@ -367,13 +376,23 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
 
       var analytics_div = $("<div>").attr("id","analytics_div").attr("class","col-xs-12 border");
       analytics_div.append(
-        $("<h4>").text("Facebook analytics"),//title
-        $("<ul>").attr('class','stats').append( // list of analytics
-          $("<li>").text(analytics.share_count + " shares,"),
-          $("<li>").text(analytics.like_count + " likes,"),
-          $("<li>").text(analytics.comment_count + " comments"),
-          $("<li>").text(analytics.click_count+ " clicks")
+        $("<div>").attr("class","row").append(
+          
+          $("<div>").attr("class","col-xs-10").append(
+
+              $("<h4>").text("Facebook analytics"),//title
+              $("<ul>").attr('class','stats').append( // list of analytics
+                $("<li>").text(analytics.share_count + " shares,"),
+                $("<li>").text(analytics.like_count + " likes,"),
+                $("<li>").text(analytics.comment_count + " comments"),
+                $("<li>").text(analytics.click_count+ " clicks")
+                )
+            ),
+
+
+          $("<div>").attr("class","col-xs-2").append(logout_fb)
           )
+        
         )
 
       content_div.append(analytics_div);
@@ -675,19 +694,50 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
       //$("#sendTweet");
 
 
+      var logout_tr = $("<button>").attr({'class':'btn btn-default btn-xs'})
+            .text(" Logout")
+            .append(
+              $("<i>").attr({'class':'fa fa-user-times'})
+              )
+            .click(function(){
+              
+
+              localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+              localStorage.removeItem(ACCESS_TOKEN_SECRET_STORAGE_KEY);
+              localStorage.removeItem(TWITTER_USER_ID_STORAGE_KEY);
+
+              alert("You are not logged out from twitter");
+              window.reload();
+            })
 
       renderTweets = function(y){
 
         var root = $("<div>").attr("id", "tweets").attr("class", "col-xs-12");
         $(loading).addClass('show').removeClass('hide');
-        $(elm).html('');
+        
 
         var loadView = function(){
+          $(elm).html('');
           $(elm).append(
           
                 $("<div>").attr("id","header").attr("class","col-xs-12 border")
                 .prepend(
-                  $("<h5>").attr("class","col-xs-12").html("<b class='bold-heading'>Tweets</b> for <i>" + url + "</i>")
+
+
+                  $("<div>").attr("class","row").append(
+
+                    $("<div>").attr("class","col-xs-10").append(
+                        $("<h5>").attr("class","col-xs-12").html("<b class='bold-heading'>Tweets</b> for <i>" + url + "</i>")
+                      ),
+
+
+
+                    $("<div>").attr("class","col-xs-2").append(logout_tr)
+
+
+                    )
+
+                  
                   ),
                 root
           );
