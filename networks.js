@@ -154,7 +154,7 @@ Networks.prototype.showSentiments = function(elm,loading,url,cb){
     success: function(data){      
 
       sentiments_div.append(
-             $("<p>").text("The website seems quite <i>"+data.type + "</i>  in behaviour for the above entities with a score of " + parseInt(parseFloat(data.score)*100) +"%")
+             $("<p>").html("The website seems quite <i>"+data.type + "</i>  in behaviour for the above entities with a score of " + parseInt(parseFloat(data.score)*100) +"%")
       );
 
       getEntities();
