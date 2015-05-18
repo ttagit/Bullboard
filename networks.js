@@ -138,7 +138,7 @@ Networks.prototype.isAuthenticated = function() {
 };
 
 
-Networks.prototype.showSentiments = function(elm,loading,url){
+Networks.prototype.showSentiments = function(elm,loading,url,cb){
   var message_div = $("<div>").attr("id","b_content_div").attr("class","col-xs-12 border");
   var sentiments_div = $("<div>").attr("id","b_sentiments_div").attr("class","col-xs-12 border");
   var entities_div = $("<div>").attr("id","b_entities_div").attr("class","col-xs-12");
@@ -151,18 +151,15 @@ Networks.prototype.showSentiments = function(elm,loading,url){
   $.ajax({
     type: "GET",
     url: "http://ttagit.demo.hatchitup.com:8990/api/sentiments?url="+url,
-    success: function(data){
-
-    
-      $(loading).addClass('hide').removeClass('show');
-
-      
+    success: function(data){      
 
       sentiments_div.append(
-             $("<p>").text("The website audience is treating this page as "+data.type + " with a score of " + parseInt(parseFloat(data.score)*100) +"%")
+             $("<p>").text("The website seems quite <i>"+data.type + "</i>  in behaviour for the above entities with a score of " + parseInt(parseFloat(data.score)*100) +"%")
       );
+
+      getEntities();
       
-      $(elm).append(message_div,sentiments_div,entities_div);
+      
     },
     error: function(xhr, status, error) {
       //alert(JSON.stringify(xhr));
@@ -180,81 +177,48 @@ Networks.prototype.showSentiments = function(elm,loading,url){
     dataType: "json"
   });
   
+  var getEntities = function(){
+    //entities
+    $.ajax({
+      type: "GET",
+      url: "http://ttagit.demo.hatchitup.com:8990/api/entities?url="+url,
+      success: function(data){
 
-  //entities
-  $.ajax({
-    type: "GET",
-    url: "http://ttagit.demo.hatchitup.com:8990/api/entities?url="+url,
-    success: function(data){
+        $(loading).addClass('hide').removeClass('show');
 
-      var chart = $("<canvas>").attr({"id":"chart"});
-      var ctx = chart.get(0).getContext("2d");
-
-      var data = {
-              labels: ["January", "February", "March", "April", "May", "June", "July"],
-              datasets: [
-                  {
-                      label: "My First dataset",
-                      fillColor: "rgba(220,220,220,0.2)",
-                      strokeColor: "rgba(220,220,220,1)",
-                      pointColor: "rgba(220,220,220,1)",
-                      pointStrokeColor: "#fff",
-                      pointHighlightFill: "#fff",
-                      pointHighlightStroke: "rgba(220,220,220,1)",
-                      data: [65, 59, 80, 81, 56, 55, 40]
-                  },
-                  {
-                      label: "My Second dataset",
-                      fillColor: "rgba(151,187,205,0.2)",
-                      strokeColor: "rgba(151,187,205,1)",
-                      pointColor: "rgba(151,187,205,1)",
-                      pointStrokeColor: "#fff",
-                      pointHighlightFill: "#fff",
-                      pointHighlightStroke: "rgba(151,187,205,1)",
-                      data: [28, 48, 40, 19, 86, 27, 90]
-                  }
-              ]
-          };
-      
-
-
-
-
-      $(loading).addClass('hide').removeClass('show');
-
-      //var list = $("<ul>").attr({'class':'sentiments'});
-      //$.each(data,function(index,value){
-        //if(value.text)
-        // list.append(
-        //   chart
-        //   )
+        //var list = $("<ul>").attr({'class':'sentiments'});
+        //$.each(data,function(index,value){
+          //if(value.text)
+          // list.append(
+          //   chart
+          //   )
+          
+          //if(index == (data.length-1)  || (data.length==1 && index==0))
+            //entities_div.append(chart);
+        //});
         
-        //if(index == (data.length-1)  || (data.length==1 && index==0))
-          entities_div.append(chart);
-      //});
-      
-      
-      $(elm).append(message_div,sentiments_div,entities_div).promise().done(function(){
-        var myNewChart = new Chart(ctx).Line(data);
-        alert("DONE")
-      });
-      
-    },
-    error: function(xhr, status, error) {
-      //alert(JSON.stringify(xhr));
-      //alert(JSON.stringify(message));
-      //alert(JSON.stringify(error));
-      //alert(OAuth.addToURL(message.action, message.parameters));
-      //alert(encodeURIComponent($(tweetInput).find("textarea").val() +" " + url).replace(/'/g,"%27").replace(/"/g,"%22"));
+        
+        $(elm).append(message_div,sentiments_div,entities_div);
+        cb(data);
+        
+      },
+      error: function(xhr, status, error) {
+        //alert(JSON.stringify(xhr));
+        //alert(JSON.stringify(message));
+        //alert(JSON.stringify(error));
+        //alert(OAuth.addToURL(message.action, message.parameters));
+        //alert(encodeURIComponent($(tweetInput).find("textarea").val() +" " + url).replace(/'/g,"%27").replace(/"/g,"%22"));
 
-      if (xhr.status === 401) {
-        //localStorage.removeItem("access_token");
+        if (xhr.status === 401) {
+          //localStorage.removeItem("access_token");
 
-        //$(elm.querySelector("#twitter-login")).css("display", "block");
-      }
-    },
-    dataType: "json"
-  });
+          //$(elm.querySelector("#twitter-login")).css("display", "block");
+        }
+      },
+      dataType: "json"
+    });
+      
+  }
   
 
   
@@ -368,7 +332,7 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
       },
       error: function(xhr, status, error) {
         $(loading).addClass('hide').removeClass('show');
-        alert(JSON.stringify(xhr));
+        //alert(JSON.stringify(xhr));
         //alert(JSON.stringify(message));
         //alert(JSON.stringify(error));
         //alert(OAuth.addToURL(message.action, message.parameters));
@@ -398,7 +362,7 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
     )
   .click(function(){
     localStorage.removeItem('fbToken');
-    alert("You are not logged out from facebook");
+    alert("You are now logged out from facebook");
     window.reload();
   })
 
@@ -745,7 +709,7 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
               localStorage.removeItem(ACCESS_TOKEN_SECRET_STORAGE_KEY);
               localStorage.removeItem(TWITTER_USER_ID_STORAGE_KEY);
 
-              alert("You are not logged out from twitter");
+              alert("You are now logged out from twitter");
               window.reload();
             })
 

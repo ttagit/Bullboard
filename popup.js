@@ -52,12 +52,57 @@
   }
 
 
+
+
+
+
   var  b_loading = document.querySelector("#b_loading")
       ,b_content = document.querySelector("#b_content");
 
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     $("#b_loading").addClass('show').removeClass('hide');
-    network.showSentiments(b_content,b_loading,tabs[0].url);
+    network.showSentiments(b_content,b_loading,tabs[0].url,function(chartData){
+        
+        var dataSet = [];
+        _.each(chartData,function(d,i){
+          
+          if(d.text && dataSet.length<11){
+            dataSet.push({label:d.text,data:d.relevance,color: '#'+(Math.random()*0xFFFFFF<<0).toString(16) })
+          }
+          
+        })
+
+        var options = {
+          series: {
+            pie: {
+                show: true,                
+                radius: 500,
+                label: {
+                    show:true,
+                    radius: 0.8,
+                    formatter: function (label, series) {                
+                        return '<div style="border:1px solid grey;font-size:8pt;text-align:center;padding:5px;color:white;">' +
+                        label + ' : ' +
+                        Math.round(series.percent) +
+                        '%</div>';
+                    },
+                    background: {
+                        opacity: 0.8,
+                        color: '#000'
+                    }
+                }
+            }
+        },
+        legend: {
+            show: false
+        }
+      }
+      $("#canvas").attr({"style":"height:400px;width:520px;"});
+      $.plot($("#canvas"), dataSet, options);
+
+    });
+
+        
   });
 
 
