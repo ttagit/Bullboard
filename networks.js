@@ -383,29 +383,42 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
 
       $(loading).addClass('hide');
 
-      var analytics_div = $("<div>").attr("id","analytics_div").attr("class","col-xs-12 border");
-      analytics_div.append(
-        $("<div>").attr("class","row").append(
+      $.ajax({
+        type: "GET",
+        url:"https://graph.facebook.com/me?"+localStorage.getItem('fbToken'),
+        success: function(data){
+
+          //
+
+          var dp = $("<div>").append(
+            $("<img>").attr({"src":"https://graph.facebook.com/"+data.id+"/picture"}),
+            $("<p>").text("Hi,"+data.first_name)
+            )
+          var analytics_div = $("<div>").attr("id","analytics_div").attr("class","col-xs-12 border");
+          analytics_div.append(
+
+            $("<div>").attr("class","row").append(
+
+              $("<div>").attr("class","col-xs-8").append(
+                  $("<p>").text("Facebook analytics for the page"),//title
+                  $("<ul>").attr('class','stats').append( // list of analytics
+                    $("<li>").text(analytics.share_count + " shares,"),
+                    $("<li>").text(analytics.like_count + " likes,"),
+                    $("<li>").text(analytics.comment_count + " comments"),
+                    $("<li>").text(analytics.click_count+ " clicks")
+                    )
+                ),
+              $("<div>").attr("class","col-xs-4").append(dp,logout_fb)
+              )
+            
+            )
+
+          content_div.append(analytics_div);
+          $(elm).append(analytics_div,content_div,post_div);
+        }
+      })
+
           
-          $("<div>").attr("class","col-xs-10").append(
-
-              $("<h4>").text("Facebook analytics"),//title
-              $("<ul>").attr('class','stats').append( // list of analytics
-                $("<li>").text(analytics.share_count + " shares,"),
-                $("<li>").text(analytics.like_count + " likes,"),
-                $("<li>").text(analytics.comment_count + " comments"),
-                $("<li>").text(analytics.click_count+ " clicks")
-                )
-            ),
-
-
-          $("<div>").attr("class","col-xs-2").append(logout_fb)
-          )
-        
-        )
-
-      content_div.append(analytics_div);
-      $(elm).append(analytics_div,content_div,post_div);
     },
     error: function(xhr, status, error) {
       //alert(JSON.stringify(xhr));
