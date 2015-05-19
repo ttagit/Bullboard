@@ -185,39 +185,28 @@ Networks.prototype.showSentiments = function(elm,loading,url,cb){
       url: "http://ttagit.demo.hatchitup.com:8990/api/entities?url="+url,
       success: function(data){
 
-        $(loading).addClass('hide').removeClass('show');
 
-        //var list = $("<ul>").attr({'class':'sentiments'});
-        //$.each(data,function(index,value){
-          //if(value.text)
-          // list.append(
-          //   chart
-          //   )
+          //entities
+          $.ajax({
+            type: "GET",
+            url: "http://ttagit.demo.hatchitup.com:8990/api/concepts?url="+url,
+            success: function(conceptsData){
+
+              $(loading).addClass('hide').removeClass('show');        
+              $(elm).append(message_div,sentiments_div,entities_div);
+              cb(data,conceptsData);
+              
+            },
+            dataType: "json"
+          });
           
-          //if(index == (data.length-1)  || (data.length==1 && index==0))
-            //entities_div.append(chart);
-        //});
-        
-        
-        $(elm).append(message_div,sentiments_div,entities_div);
-        cb(data);
-        
-      },
-      error: function(xhr, status, error) {
-        //alert(JSON.stringify(xhr));
-        //alert(JSON.stringify(message));
-        //alert(JSON.stringify(error));
-        //alert(OAuth.addToURL(message.action, message.parameters));
-        //alert(encodeURIComponent($(tweetInput).find("textarea").val() +" " + url).replace(/'/g,"%27").replace(/"/g,"%22"));
 
-        if (xhr.status === 401) {
-          //localStorage.removeItem("access_token");
-
-          //$(elm.querySelector("#twitter-login")).css("display", "block");
-        }
+        
+        
       },
       dataType: "json"
     });
+
       
   }
   
@@ -380,7 +369,7 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
                         $("<h5>").text(posted_json.name),
                         $("<p>").text(posted_json.description),
                         $("<small>").text(posted_json.caption),
-                        $("<button>").attr({"class":"btn btn-xs btn-danger"}).text("Delete this post").click(function(){
+                        $("<button>").attr({"class":"btn btn-xs btn-danger pull-right"}).text("Delete this post").click(function(){
                           deletePost(posted_json.id)
                         })
                         )

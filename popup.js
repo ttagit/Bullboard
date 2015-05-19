@@ -61,13 +61,30 @@
 
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     $("#b_loading").addClass('show').removeClass('hide');
-    network.showSentiments(b_content,b_loading,tabs[0].url,function(chartData){
+    network.showSentiments(b_content,b_loading,tabs[0].url,function(entitiesData,conceptsData){
         
         var dataSet = [];
-        _.each(chartData,function(d,i){
+        _.each(entitiesData,function(d,i){
           
           if(d.text && dataSet.length<11){
-            dataSet.push({label:d.text,data:d.relevance,color: '#'+(Math.random()*0xFFFFFF<<0).toString(16) })
+            dataSet.push({label:d.text,data:d.relevance,
+
+              color: Please.make_color({
+                      golden: false})
+          })
+          }
+          
+        })
+
+        var ConceptsdataSet = [];
+        _.each(conceptsData,function(d,i){
+          
+          if(d.text && ConceptsdataSet.length<11){
+            ConceptsdataSet.push({label:d.text,data:d.relevance,
+
+              color: Please.make_color({
+                      golden: false})
+          })
           }
           
         })
@@ -97,8 +114,38 @@
             show: false
         }
       }
+      
       $("#canvas").attr({"style":"height:400px;width:520px;"});
+      $("#canvas_concepts").attr({"style":"height:400px;width:500px;"});
+
+      $(".tagged").removeClass('hide').addClass('show');
+
       $.plot($("#canvas"), dataSet, options);
+      $.plot($("#canvas_concepts"), ConceptsdataSet, {
+          series: {
+            pie: {
+                show: true,    
+                radius:200,
+                innerRadius: 0.5,
+                label: {
+                    show:true,
+                    formatter: function (label, series) {                
+                        return '<div style="border:1px solid grey;font-size:9pt;text-align:center;padding:5px;color:white;">' +
+                        label + ' : ' +
+                        Math.round(series.percent) +
+                        '%</div>';
+                    },
+                    background: {
+                        opacity: 0.8,
+                        color: '#000'
+                    }
+                }
+            }
+        },
+        legend: {
+            show: false
+        }
+      });
 
     });
 
