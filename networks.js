@@ -324,6 +324,24 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
       )
   );
 
+  var deletePost = function(id){
+    $(loading).addClass('show').removeClass('hide');
+    $.ajax({
+        type: "DELETE",
+        url: "https://graph.facebook.com/"+id+"/?"+localStorage.getItem('fbToken'),
+        success:function(){
+          $(loading).addClass('hide').removeClass('show');
+          $(fbMsg).html("Deleted");
+          setTimeout(function() {
+            $(fbMsg).fade().html("");
+          }, 2000);
+        },
+        error : function(){
+          $(fbMsg).html("There was some error while removing the post.");
+        }
+    })
+  }
+
   var sendPost = function(){
       $(loading).addClass('show').removeClass('hide');
 
@@ -335,12 +353,54 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
           link : url
         },
       success: function(data){
-        $(loading).addClass('hide').removeClass('show');
-        $(fbMsg).html("Your post has been published.");
-          setTimeout(function() {
-            $(fbMsg).fade().html("");
-          }, 2000);
-          $(postInput).find("textarea").val('');
+        
+        var fetchPostedDataUrl = "https://graph.facebook.com/"+data.id+"/?"+localStorage.getItem('fbToken');
+
+        $.ajax({
+          type:"GET",
+          url:fetchPostedDataUrl,
+          success:function(posted_json){
+
+            $(loading).addClass('hide').removeClass('show');
+            $(fbMsg).append(
+              $("<div>").attr({"class":"row"}).append(
+
+                $("<div>").attr({"class":"col-xs-12 border"}).append(
+                  $("<h4>").text("The following message was posted to your timelime."),
+                  $("<div>").append(
+
+                    $("<p>").text(posted_json.message),
+
+                    $("<div>").attr({"class":"row"}).append(
+
+                      $("<div>").attr({"class":"col-xs-4"}).append(
+                        $("<img>").attr({"src":posted_json.picture})
+                        ),
+                      $("<div>").attr({"class":"col-xs-8"}).append(
+                        $("<h5>").text(posted_json.name),
+                        $("<p>").text(posted_json.description),
+                        $("<small>").text(posted_json.caption),
+                        $("<button>").attr({"class":"btn btn-xs btn-danger"}).text("Delete this post").click(function(){
+                          deletePost(posted_json.id)
+                        })
+                        )
+
+                      )
+
+
+                    )
+                  )
+
+                )
+              );
+              setTimeout(function() {
+                $(fbMsg).fade().html("");
+              }, 2000);
+              $(postInput).find("textarea").val('');
+          }
+        })
+
+        
           
       },
       error: function(xhr, status, error) {
