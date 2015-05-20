@@ -447,7 +447,7 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
 
           //
 
-          var dp = $("<img>").attr({"src":"https://graph.facebook.com/"+data.id+"/picture"}).attr({"class":"pull-right"});
+          var dp = $("<img>").attr({"src":"https://graph.facebook.com/"+data.id+"/picture"}).attr({"class":"pull-right","style":"padding:2px 8px 0px 0px;"});
           var name = $("<div>").append(
             $("<p>").text("Hi,"+data.first_name),
             logout_fb
@@ -457,7 +457,7 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
 
             $("<div>").attr("class","row").append(
 
-              $("<div>").attr("class","col-xs-9").append(
+              $("<div>").attr("class","col-xs-8").append(
                   $("<h5>").text("Facebook analytics for the page"),//title
                   $("<ul>").attr('class','stats').append( // list of analytics
                     $("<li>").text(analytics.share_count + " shares,"),
@@ -466,7 +466,7 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
                     $("<li>").text(analytics.click_count+ " clicks")
                     )
                 ),
-              $("<div>").attr("class","col-xs-3").append(name,dp)
+              $("<div>").attr("class","col-xs-4").append(name,dp)
               )
             
             )
