@@ -344,7 +344,7 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
       success: function(data){
         
         var fetchPostedDataUrl = "https://graph.facebook.com/"+data.id+"/?"+localStorage.getItem('fbToken');
-
+        
         $.ajax({
           type:"GET",
           url:fetchPostedDataUrl,
@@ -371,7 +371,8 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
                         $("<small>").text(posted_json.caption),
                         $("<button>").attr({"class":"btn btn-xs btn-danger pull-right"}).text("Delete this post").click(function(){
                           deletePost(posted_json.id)
-                        })
+                        }),
+                        $("<a>").attr({"class":"btn btn-xs btn-info pull-right","target":"_blank","href":"https://www.facebook.com/"+posted_json.from.id}).text("Go to profile")
                         )
 
                       )
