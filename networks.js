@@ -2,12 +2,6 @@ const TWITTER_USER_ID_STORAGE_KEY = "userid";
 
 var Networks = function() {};
 
-
-
-//I KNOW THIS IS TWITTER. BUT I WILL CHANGE IT.
-  
-//
-
 Networks.prototype.getAccessToken = function() {
   var accessToken = localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
 
@@ -137,82 +131,6 @@ Networks.prototype.isAuthenticated = function() {
   return !_.isNull(this.getAccessToken()) && !_.isNull(this.getAccessTokenSecret()) && _.isNumber(this.getUserID()) ? true : false;
 };
 
-
-Networks.prototype.showSentiments = function(elm,loading,url,cb){
-  var message_div = $("<div>").attr("id","b_content_div").attr("class","col-xs-12 border");
-  var sentiments_div = $("<div>").attr("id","b_sentiments_div").attr("class","col-xs-12 border");
-  var entities_div = $("<div>").attr("id","b_entities_div").attr("class","col-xs-12");
-
-  $(loading).addClass('show').removeClass('hide');
-
-  message_div.append( $("<h4>").text("Page behaviour and entities") );
-
-  //sentiments
-  $.ajax({
-    type: "GET",
-    url: "http://ttagit.demo.hatchitup.com:8990/api/sentiments?url="+url,
-    success: function(data){      
-
-      sentiments_div.append(
-             $("<p>").html("The website seems quite <i>"+data.type + "</i>  in behaviour for the above entities with a score of " + parseInt(parseFloat(data.score)*100) +"%"),
-             $("<p>").html("and for more on page behaviour and entities <a href='http://en.wikipedia.org/wiki/Sentiment_analysis' target='_blank'>click here</a>")
-      );
-
-      getEntities();
-      
-      
-    },
-    error: function(xhr, status, error) {
-      //alert(JSON.stringify(xhr));
-      //alert(JSON.stringify(message));
-      //alert(JSON.stringify(error));
-      //alert(OAuth.addToURL(message.action, message.parameters));
-      //alert(encodeURIComponent($(tweetInput).find("textarea").val() +" " + url).replace(/'/g,"%27").replace(/"/g,"%22"));
-
-      if (xhr.status === 401) {
-        //localStorage.removeItem("access_token");
-
-        //$(elm.querySelector("#twitter-login")).css("display", "block");
-      }
-    },
-    dataType: "json"
-  });
-  
-  var getEntities = function(){
-    //entities
-    $.ajax({
-      type: "GET",
-      url: "http://ttagit.demo.hatchitup.com:8990/api/entities?url="+url,
-      success: function(data){
-
-
-          //entities
-          $.ajax({
-            type: "GET",
-            url: "http://ttagit.demo.hatchitup.com:8990/api/concepts?url="+url,
-            success: function(conceptsData){
-
-              $(loading).addClass('hide').removeClass('show');        
-              $(elm).append(message_div,sentiments_div,entities_div);
-              cb(data,conceptsData);
-              
-            },
-            dataType: "json"
-          });
-          
-
-        
-        
-      },
-      dataType: "json"
-    });
-
-      
-  }
-  
-
-  
-}
 
 
 Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
