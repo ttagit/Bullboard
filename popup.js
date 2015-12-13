@@ -27,6 +27,7 @@
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 
       $("#loading").addClass('show').removeClass('hide');
+      
       network.fetchTwitter(root,input,loading,tabs[0].url);
 
     });

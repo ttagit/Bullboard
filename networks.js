@@ -419,6 +419,7 @@ Networks.prototype.fetchFacebook = function(elm,inputButton,loading,url){
 
 Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
   //
+  var twtr = this;
   var accessToken = this.getAccessToken();
   var accessTokenSecret = this.getAccessTokenSecret();
 
@@ -707,6 +708,17 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
               alert("You are now logged out from twitter");
               window.reload();
             })
+      
+      var refresh_tr = $("<button>").attr({'class':'btn btn-default btn-xs'})
+            .text(" Refresh tweets")
+            .append(
+              $("<i>").attr({'class':'fa fa-user-times'})
+              )
+            .click(function(){
+              $("#loading").addClass('show').removeClass('hide');
+              twtr.fetchTwitter(elm,inputButton,loading,url);
+            })
+      
 
       renderTweets = function(y){
 
@@ -730,7 +742,7 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
 
 
 
-                    $("<div>").attr("class","col-xs-2").append(logout_tr)
+                    $("<div>").attr("class","col-xs-2").append(refresh_tr).append(logout_tr)
 
 
                     )
