@@ -687,9 +687,10 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
     "dataType": "json",
     "success": function(data) {
 
+      $(loading).addClass('hide');
+
       if(data.statuses.length>0){
 
-          $(loading).addClass('hide');
           tweets = data.statuses;
           
 
@@ -967,11 +968,6 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
       else{
         $(elm).html('No tweets found for this page.');
       }
-
-      
-      
-      
-
       
     },
     "error": function(xhr, status, error) {
