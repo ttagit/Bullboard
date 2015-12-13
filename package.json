@@ -1,0 +1,19 @@
+{
+  "name": "ttagit_chrome",
+  "version": "1.0.0",
+  "description": "Bullboard =========",
+  "main": "background.js",
+  "scripts": {
+    "test": "true"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ttagit/Bullboard.git"
+  },
+  "author": "Hitesh Joshi <me@hiteshjoshi.com> (http://hiteshjoshi.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ttagit/Bullboard/issues"
+  },
+  "homepage": "https://github.com/ttagit/Bullboard#readme"
+}
