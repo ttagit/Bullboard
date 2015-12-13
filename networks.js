@@ -740,13 +740,13 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
 
                       $("<div>").attr("class","row").append(
 
-                        $("<div>").attr("class","col-xs-10").append(
+                        $("<div>").attr("class","col-xs-8").append(
                             $("<h5>").attr("class","col-xs-12").html("<b class='bold-heading'>Tweets</b> for <i>" + url + "</i>")
                           ),
 
 
 
-                        $("<div>").attr("class","col-xs-2").append(refresh_tr).append(logout_tr)
+                        $("<div>").attr("class","col-xs-4").append(refresh_tr).append(logout_tr)
 
 
                         )
