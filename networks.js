@@ -966,7 +966,7 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
           
       }
       else{
-        $(elm).html('No tweets found for this page.');
+        $(elm).html('No tweets found, be the first to tweet.');
       }
       
     },
