@@ -689,15 +689,7 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
 
       $(loading).addClass('hide');
 
-      if(data.statuses.length>0){
-
-          tweets = data.statuses;
-          
-
-          //$("#sendTweet");
-
-
-          var logout_tr = $("<button>").attr({'class':'btn btn-default btn-xs'})
+      var logout_tr = $("<button>").attr({'class':'btn btn-default btn-xs'})
                 .text(" Logout")
                 .append(
                   $("<i>").attr({'class':'fa fa-user-times'})
@@ -713,7 +705,7 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
                   window.reload();
                 })
           
-          var refresh_tr = $("<button>").attr({'class':'btn btn-default btn-xs'})
+      var refresh_tr = $("<button>").attr({'class':'btn btn-default btn-xs'})
                 .text(" Refresh")
                 .append(
                   $("<i>").attr({'class':'fa fa-user-times'})
@@ -723,8 +715,19 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
                   twtr.fetchTwitter(elm,inputButton,loading,url);
                 })
           
-          var loadView = function(text){
-              $(elm).html(text || '');
+
+      if(data.statuses.length>0){
+
+          tweets = data.statuses;          
+
+          renderTweets = function(y){
+
+            var root = $("<div>").attr("id", "tweets").attr("class", "col-xs-12");
+            $(loading).addClass('show').removeClass('hide');
+            
+
+            var loadView = function(){
+              $(elm).html('');
               $(elm).append(
               
                     $("<div>").attr("id","header").attr("class","col-xs-12 border")
@@ -750,14 +753,6 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
               );
               $(inputButton).html(tweetInput);
             };
-
-          renderTweets = function(y){
-
-            var root = $("<div>").attr("id", "tweets").attr("class", "col-xs-12");
-            $(loading).addClass('show').removeClass('hide');
-            
-
-            
             
             tweets.forEach(function(tweet,index) {
               var retweeted = false;
@@ -967,7 +962,34 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
           
       }
       else{
-        loadView('No tweets found, be the first to tweet.');
+        var root = $("<div>").attr("id", "tweets").attr("class", "col-xs-12");
+        $(loading).addClass('show').removeClass('hide');
+        $(elm).html('');
+        $(elm).append(
+        
+              $("<div>").attr("id","header").attr("class","col-xs-12 border")
+              .prepend(
+
+
+                $("<div>").attr("class","row").append(
+
+                  $("<div>").attr("class","col-xs-8").append(
+                      $("<h5>").attr("class","col-xs-12").html("No tweets found, be the first to tweet")
+                    ),
+
+
+
+                  $("<div>").attr("class","col-xs-4").append(refresh_tr).append(logout_tr)
+
+
+                  )
+
+                
+                ),
+              root
+        );
+        $(inputButton).html(tweetInput);
+      
       }
       
     },
