@@ -723,15 +723,8 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
                   twtr.fetchTwitter(elm,inputButton,loading,url);
                 })
           
-
-          renderTweets = function(y){
-
-            var root = $("<div>").attr("id", "tweets").attr("class", "col-xs-12");
-            $(loading).addClass('show').removeClass('hide');
-            
-
-            var loadView = function(){
-              $(elm).html('');
+          var loadView = function(text){
+              $(elm).html(text || '');
               $(elm).append(
               
                     $("<div>").attr("id","header").attr("class","col-xs-12 border")
@@ -757,6 +750,14 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
               );
               $(inputButton).html(tweetInput);
             };
+
+          renderTweets = function(y){
+
+            var root = $("<div>").attr("id", "tweets").attr("class", "col-xs-12");
+            $(loading).addClass('show').removeClass('hide');
+            
+
+            
             
             tweets.forEach(function(tweet,index) {
               var retweeted = false;
@@ -966,7 +967,7 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
           
       }
       else{
-        $(elm).html('No tweets found, be the first to tweet.');
+        loadView('No tweets found, be the first to tweet.');
       }
       
     },
