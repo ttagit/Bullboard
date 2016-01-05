@@ -485,8 +485,8 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
 
       )
   );
-  var debug = $("<div>").attr("id", "debug");
-  debug.html(JSON.stringify(OAuth.addToURL(message.action, message.parameters)));
+  //var debug = $("<div>").attr("id", "debug");
+  //debug.html(JSON.stringify(OAuth.addToURL(message.action, message.parameters)));
   
   var renderTweets = null;
   var tweets = null;
@@ -956,7 +956,7 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
           }
           
           $(loading).addClass('hide').removeClass('show');
-          root.append(debug);
+          //root.append(debug);
 
         });
   
