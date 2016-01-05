@@ -1,7 +1,7 @@
 {
   "name": "TTAGIT",
   "description": "Commenting system using Twitter as a Framework. Also check what tweets are on any URL",
-  "version": "4.2.1",
+  "version": "4.2.2",
   "manifest_version": 2,
   "content_scripts": [
     {

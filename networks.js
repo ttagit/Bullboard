@@ -485,12 +485,13 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
 
       )
   );
-  //var debug = $("<div>").attr("id", "debug");
-  //debug.html(JSON.stringify(OAuth.addToURL(message.action, message.parameters)));
+  var debug = $("<div>").attr("id", "debug");
+  debug.html(JSON.stringify(OAuth.addToURL(message.action, message.parameters)));
   
   var renderTweets = null;
   var tweets = null;
   var in_reply_to_status_id = null;
+  var root = null; //the root div
 
 
   
@@ -516,11 +517,18 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
       url: OAuth.addToURL(message.action, message.parameters),
       //data: {status : encodeURIComponent($(tweetInput).find("textarea").val() +" " +url).replace(/'/g,"%27").replace(/"/g,"%22") },
       success: function(data){
-        //alert(JSON.stringify(data));
-        tweets.unshift(data);
+        if(tweets.length<1){
+          tweets = [data];
+        }
+        else{
+          tweets.unshift(data);
+        }
+
+
         renderTweets(true);
         $(tweetInput).find("textarea").val("");
         $(loading).addClass('hide').removeClass('show');
+
       },
       error: function(xhr, status, error) {
         //alert(JSON.stringify(xhr));
@@ -711,259 +719,260 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
                   $("<i>").attr({'class':'fa fa-user-times'})
                   )
                 .click(function(){
-                  $("#loading").addClass('show').removeClass('hide');
+                  $(loading).addClass('show').removeClass('hide');
                   twtr.fetchTwitter(elm,inputButton,loading,url);
                 })
           
 
-      if(data.statuses.length>0){
+      
 
-          tweets = data.statuses;          
+      tweets = data.statuses || [];          
 
-          renderTweets = function(y){
+      renderTweets = function(reload){
+        
+        if(root && root != null)
+          root = $("<div>").attr("id", "tweets").attr("class", "col-xs-12");
+        $(loading).addClass('show').removeClass('hide');
+        
 
-            var root = $("<div>").attr("id", "tweets").attr("class", "col-xs-12");
-            $(loading).addClass('show').removeClass('hide');
-            
-
-            var loadView = function(){
-              $(elm).html('');
-              $(elm).append(
-              
-                    $("<div>").attr("id","header").attr("class","col-xs-12 border")
-                    .prepend(
-
-
-                      $("<div>").attr("class","row").append(
-
-                        $("<div>").attr("class","col-xs-8").append(
-                            $("<h5>").attr("class","col-xs-12").html("<b class='bold-heading'>Tweets</b> for <i>" + url + "</i>")
-                          ),
+        var loadView = function(){
+          $(elm).html('');
+          $(elm).append(
+          
+                $("<div>").attr("id","header").attr("class","col-xs-12 border")
+                .prepend(
 
 
+                  $("<div>").attr("class","row").append(
 
-                        $("<div>").attr("class","col-xs-4").append(refresh_tr).append(logout_tr)
-
-
-                        )
-
-                      
+                    $("<div>").attr("class","col-xs-8").append(
+                        $("<h5>").attr("class","col-xs-12").html("<b class='bold-heading'>Tweets</b> for <i>" + url + "</i>")
                       ),
-                    root
-              );
-              $(inputButton).html(tweetInput);
-            };
-            
-            tweets.forEach(function(tweet,index) {
-              var retweeted = false;
-
-              if (_.has(tweet, "retweeted_status")) {
-                var entities = tweet.entities;
-                var retweetUser = tweet.user;
-
-                tweet = tweet.retweeted_status;
-                tweet.entities = entities;
-                tweet.retweet_user = retweetUser;
-
-                retweeted = true;
-              }
-
-              var user = tweet.user;
-              var source = $(tweet.source);
-              
-              if (_.isObject(source) && _.isElement(source[0])) {
-                source.attr("target", "_blank");
-              } else {
-                source = $("<a>").attr("href", "javascript:void(0)").text(tweet.source);
-              }
-
-              $(source).attr(
-                            "class",
-                            "time-information"
-                          );
-              $(source).html( "Tweeted through "+$(source).html() );
-
-              var replyBack = $("<a>").attr({"href":"javascript:void(0)","id":"reply"+tweet.id_str, "data-original-title":"Reply"}).prepend(
-                  $('<i>').attr("class","fa fa-reply")
-                );
-
-              var retweet =  $("<a>").attr({"href":"javascript:void(0)","id":"retweet"+tweet.id_str,"data-original-title":"Retweet"}).prepend(
-                  $('<i>').attr("class","fa fa-retweet")
-                );
 
 
-              
 
-              if(retweeted)
-                $(retweet).attr('class','retweeted');
+                    $("<div>").attr("class","col-xs-4").append(refresh_tr).append(logout_tr)
 
-              var like =  $("<a>").attr({"href":"javascript:void(0)","id":"like"+tweet.id_str,"data-original-title":"Like"}).prepend(
-                  $('<i>').attr("class","fa fa-star")
-                );
-
-
-              $(replyBack).tooltip();
-              $(retweet).tooltip();
-              $(like).tooltip();
-
-
-              $(replyBack).click(function(){
-                in_reply_to_status_id = tweet.id_str;
-                $(tweetInput).find("textarea").val("@"+user.screen_name);
-              });
-
-              
-              $(retweet).click(function(){
-                //if(retweeted)
-                  reTweet(tweet.id_str,retweet);
-                // else
-                //   undoReTweet(tweet.id_str,retweet);
-              });
-
-              
-              $(like).click(function(){
-                favIt(tweet.id_str,like);
-              });
-
-              
-
-              var row = $("<div>").attr("class", "rows");
-              var tweetTime = $("<a>").attr(
-                            "href",
-                            "https://twitter.com/" + user.screen_name + "/status/" + tweet.id_str
-                          ).attr(
-                            "target",
-                            "_blank"
-                          )
-                          .attr(
-                            "class",
-                            "time-information"
-                          )
-                          .attr(
-                            "title",
-                            new Date(tweet.created_at)
-                          ).text(normalizeDateTime(new Date(tweet.created_at)));
-
-              var followButton = $("<button>").attr("class","btn btn-primary btn-xs").attr('following','false').text("Follow @" + user.screen_name);
-              if(user.following)
-                $(followButton).attr('following','true').text("Unfollow @" + user.screen_name);
-              var tweetInfo = 
-                    $("<div>").attr("class", "tweet-info clearfix").append(
-                      $("<div>").attr("class", "row").append(
-                        $("<div>").attr("class", "col-xs-8").append(
-                          followButton
-                        ),
-                        $("<div>").attr("class", "col-xs-4").append(
-                          $("<ul>").attr("class","list-inline pull-right").append(
-                            $("<li>").append(replyBack),
-                            $("<li>").append(retweet),
-                            $("<li>").append(like)
-                          )
-                        )
-                      )
-                      
-                    );
-
-
-              $(followButton).click(function(){
-                if( JSON.parse( $(followButton).attr('following') ) )
-                  follow(user.id,followButton,user.screen_name,true);
-                else
-                  follow(user.id,followButton,user.screen_name,false);
-              });
-              
-              var media = $("<div>").attr("class", "medias");
-              if(tweet.entities.media && tweet.entities.media.length){
-                var mElements = tweet.entities.media[0];
-
-                $(media).append(
-                  $("<img>").attr("src",mElements.media_url)
-                  );
-              };
-              
-
-              row.append(
-
-                $("<div>").attr("class", "tweet-icon col-xs-2").append(
-                  $("<img>").attr("src", user.profile_image_url_https).attr("class","img-rounded")
-                ),
-
-
-                $("<div>").attr("class", "tweet-detail col-xs-10").prepend(
-
-
-                  $("<div>").attr("class", "row").prepend(
-
-                    $("<div>").attr("class", "col-xs-6").prepend(
-
-
-                      //username
-                      $("<a>").attr(
-                          "href",
-                          "http://twitter.com/" + user.screen_name
-                        ).attr("target", "_blank").attr("class", "username").text(user.name)
-                          
-                      ),
-                    
-                    $("<div>").attr("class", "col-xs-6").prepend(
-                          $("<div>").attr("class","pull-right").append(
-                            $("<p>").attr("class","").append(tweetTime)
-                          )
-                      )
-                    
-
-                    ),
-
-                  $("<div>").attr("class", "row").prepend(
-
-                    $("<div>").attr("class", "col-xs-12").prepend(
-                      //
-                      //tweet.entities.media
-                      $("<div>").attr("class","border").html((normalizeTweetText(tweet))),
-                      media,
-                      tweetInfo,
-                      source
-                          
-                      )
-                    
 
                     )
 
-                    
-                )
+                  
+                  ),
+                root
+          );
+          $(inputButton).html(tweetInput);
+        };
+        
+        tweets.forEach(function(tweet,index) {
+          var retweeted = false;
 
-              )
-              var tweetView = $("<div>").attr("class", "tweet border").append(
-                row);
+          if (_.has(tweet, "retweeted_status")) {
+            var entities = tweet.entities;
+            var retweetUser = tweet.user;
 
-              tweetView.append($("<div>").attr("class", "clearfix"));
+            tweet = tweet.retweeted_status;
+            tweet.entities = entities;
+            tweet.retweet_user = retweetUser;
 
-              
-              root.append(tweetView);
-              if(tweets.length-1 == index)
-                loadView();
-              
-              $(loading).addClass('hide').removeClass('show');
-              //root.append(debug);
+            retweeted = true;
+          }
 
-            });
-      
-            
+          var user = tweet.user;
+          var source = $(tweet.source);
+          
+          if (_.isObject(source) && _.isElement(source[0])) {
+            source.attr("target", "_blank");
+          } else {
+            source = $("<a>").attr("href", "javascript:void(0)").text(tweet.source);
+          }
 
-          };
+          $(source).attr(
+                        "class",
+                        "time-information"
+                      );
+          $(source).html( "Tweeted through "+$(source).html() );
+
+          var replyBack = $("<a>").attr({"href":"javascript:void(0)","id":"reply"+tweet.id_str, "data-original-title":"Reply"}).prepend(
+              $('<i>').attr("class","fa fa-reply")
+            );
+
+          var retweet =  $("<a>").attr({"href":"javascript:void(0)","id":"retweet"+tweet.id_str,"data-original-title":"Retweet"}).prepend(
+              $('<i>').attr("class","fa fa-retweet")
+            );
 
 
           
 
-          renderTweets();
-            
+          if(retweeted)
+            $(retweet).attr('class','retweeted');
 
+          var like =  $("<a>").attr({"href":"javascript:void(0)","id":"like"+tweet.id_str,"data-original-title":"Like"}).prepend(
+              $('<i>').attr("class","fa fa-star")
+            );
+
+
+          $(replyBack).tooltip();
+          $(retweet).tooltip();
+          $(like).tooltip();
+
+
+          $(replyBack).click(function(){
+            in_reply_to_status_id = tweet.id_str;
+            $(tweetInput).find("textarea").val("@"+user.screen_name);
+          });
+
+          
+          $(retweet).click(function(){
+            //if(retweeted)
+              reTweet(tweet.id_str,retweet);
+            // else
+            //   undoReTweet(tweet.id_str,retweet);
+          });
+
+          
+          $(like).click(function(){
+            favIt(tweet.id_str,like);
+          });
+
+          
+
+          var row = $("<div>").attr("class", "rows");
+          var tweetTime = $("<a>").attr(
+                        "href",
+                        "https://twitter.com/" + user.screen_name + "/status/" + tweet.id_str
+                      ).attr(
+                        "target",
+                        "_blank"
+                      )
+                      .attr(
+                        "class",
+                        "time-information"
+                      )
+                      .attr(
+                        "title",
+                        new Date(tweet.created_at)
+                      ).text(normalizeDateTime(new Date(tweet.created_at)));
+
+          var followButton = $("<button>").attr("class","btn btn-primary btn-xs").attr('following','false').text("Follow @" + user.screen_name);
+          if(user.following)
+            $(followButton).attr('following','true').text("Unfollow @" + user.screen_name);
+          var tweetInfo = 
+                $("<div>").attr("class", "tweet-info clearfix").append(
+                  $("<div>").attr("class", "row").append(
+                    $("<div>").attr("class", "col-xs-8").append(
+                      followButton
+                    ),
+                    $("<div>").attr("class", "col-xs-4").append(
+                      $("<ul>").attr("class","list-inline pull-right").append(
+                        $("<li>").append(replyBack),
+                        $("<li>").append(retweet),
+                        $("<li>").append(like)
+                      )
+                    )
+                  )
+                  
+                );
+
+
+          $(followButton).click(function(){
+            if( JSON.parse( $(followButton).attr('following') ) )
+              follow(user.id,followButton,user.screen_name,true);
+            else
+              follow(user.id,followButton,user.screen_name,false);
+          });
+          
+          var media = $("<div>").attr("class", "medias");
+          if(tweet.entities.media && tweet.entities.media.length){
+            var mElements = tweet.entities.media[0];
+
+            $(media).append(
+              $("<img>").attr("src",mElements.media_url)
+              );
+          };
+          
+
+          row.append(
+
+            $("<div>").attr("class", "tweet-icon col-xs-2").append(
+              $("<img>").attr("src", user.profile_image_url_https).attr("class","img-rounded")
+            ),
+
+
+            $("<div>").attr("class", "tweet-detail col-xs-10").prepend(
+
+
+              $("<div>").attr("class", "row").prepend(
+
+                $("<div>").attr("class", "col-xs-6").prepend(
+
+
+                  //username
+                  $("<a>").attr(
+                      "href",
+                      "http://twitter.com/" + user.screen_name
+                    ).attr("target", "_blank").attr("class", "username").text(user.name)
+                      
+                  ),
+                
+                $("<div>").attr("class", "col-xs-6").prepend(
+                      $("<div>").attr("class","pull-right").append(
+                        $("<p>").attr("class","").append(tweetTime)
+                      )
+                  )
+                
+
+                ),
+
+              $("<div>").attr("class", "row").prepend(
+
+                $("<div>").attr("class", "col-xs-12").prepend(
+                  //
+                  //tweet.entities.media
+                  $("<div>").attr("class","border").html((normalizeTweetText(tweet))),
+                  media,
+                  tweetInfo,
+                  source
+                      
+                  )
+                
+
+                )
+
+                
+            )
+
+          )
+          var tweetView = $("<div>").attr("class", "tweet border").append(
+            row);
+
+          tweetView.append($("<div>").attr("class", "clearfix"));
+
+          
+          root.append(tweetView);
+          if(tweets.length-1 == index){
+            //alert(index)
+            loadView();
+
+          }
+          
+          $(loading).addClass('hide').removeClass('show');
+          root.append(debug);
+
+        });
+  
+        
+
+      };
+
+
+      if(tweets.length>0){
+          renderTweets();
           elm.removeChild(elm.querySelector("#twitter-login"));
           
       }
       else{
         var root = $("<div>").attr("id", "tweets").attr("class", "col-xs-12");
-        $(loading).addClass('show').removeClass('hide');
+        $(loading).addClass('hide').removeClass('show');
         $(elm).html('');
         $(elm).append(
         
