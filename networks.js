@@ -485,13 +485,12 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
 
       )
   );
-  //var debug = $("<div>").attr("id", "debug");
+  var debug = $("<div>").attr("id", "debug");
   //debug.html(JSON.stringify(OAuth.addToURL(message.action, message.parameters)));
   
   var renderTweets = null;
   var tweets = null;
   var in_reply_to_status_id = null;
-  var root = null; //the root div
 
 
   
@@ -730,8 +729,8 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
 
       renderTweets = function(reload){
         
-        if(root && root != null)
-          root = $("<div>").attr("id", "tweets").attr("class", "col-xs-12");
+        //if(root && root != null)
+        var root = $("<div>").attr("id", "tweets").attr("class", "col-xs-12");
         $(loading).addClass('show').removeClass('hide');
         
 
@@ -956,7 +955,7 @@ Networks.prototype.fetchTwitter = function(elm,inputButton,loading,url) {
           }
           
           $(loading).addClass('hide').removeClass('show');
-          //root.append(debug);
+          root.append(debug);
 
         });
   
